@@ -1,0 +1,555 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<style>
+
+    body {
+        background-color: #f5faff;
+        font-family: Arial, sans-serif;
+    }
+
+    .main-container {
+        padding: 30px;
+    }
+
+    .page-title {
+        color: #173b57;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .page-subtitle {
+        color: #6c757d;
+        margin-bottom: 25px;
+    }
+
+    .card {
+        border: 1px solid #d9e3eb;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        background-color: #173b57;
+        color: white;
+        font-weight: 600;
+        padding: 15px 20px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #173b57;
+    }
+
+    .form-control {
+        border: 1px solid #b8c7d3;
+        border-radius: 7px;
+        padding: 10px 12px;
+    }
+
+    .form-control:focus {
+        border-color: #2c6e9e;
+        box-shadow: 0 0 0 0.15rem rgba(44, 110, 158, 0.15);
+    }
+
+    .btn-add {
+        background-color: #2c6e9e;
+        color: white;
+        border: 1px solid #173b57;
+        padding: 10px 22px;
+        font-weight: 600;
+        border-radius: 7px;
+    }
+
+    .btn-add:hover {
+        background-color: #173b57;
+        color: white;
+    }
+
+    .table {
+        margin-bottom: 0;
+        vertical-align: middle;
+    }
+
+    .table thead {
+        background-color: #173b57;
+        color: white;
+    }
+
+    .table thead th {
+        padding: 13px;
+        white-space: nowrap;
+    }
+
+    .table tbody td {
+        padding: 13px;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f1f7fb;
+    }
+
+    .medicine-name {
+        color: #173b57;
+        font-weight: 700;
+    }
+
+    .dosage-badge {
+        display: inline-block;
+        background-color: #e8f3fb;
+        color: #173b57;
+        border: 1px solid #9fc1d8;
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-weight: 600;
+    }
+
+    .warning-box {
+        background-color: #fff3cd;
+        border: 1px solid #e0c36b;
+        border-radius: 6px;
+        padding: 8px 10px;
+        color: #664d03;
+    }
+
+    .empty-message {
+        padding: 35px !important;
+        color: #6c757d;
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    .required {
+        color: red;
+    }
+
+    .count-badge {
+        background-color: white;
+        color: #173b57;
+        padding: 6px 10px;
+        border-radius: 20px;
+        font-size: 13px;
+    }
+
+    @media (max-width: 768px) {
+
+        .main-container {
+            padding: 15px;
+        }
+
+        .page-title {
+            font-size: 24px;
+        }
+
+        .table {
+            font-size: 13px;
+        }
+
+    }
+
+</style>
+
+<div class="main-container">
+
+<!-- ================= PAGE HEADER ================= -->
+
+<div class="mb-4">
+
+    <h2 class="page-title">
+
+        <i class="bi bi-capsule"></i>
+
+        Manage Medicines
+
+    </h2>
+
+    <p class="page-subtitle">
+
+        Add medicine information that can be viewed by doctors and users.
+
+    </p>
+
+</div>
+
+
+<!-- ================= SUCCESS / ERROR MESSAGES ================= -->
+
+{% if messages %}
+
+    {% for message in messages %}
+
+        <div
+            class="alert alert-{{ message.tags }} alert-dismissible fade show"
+            role="alert"
+        >
+
+            {{ message }}
+
+            <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+            ></button>
+
+        </div>
+
+    {% endfor %}
+
+{% endif %}
+
+
+<!-- ================= ADD MEDICINE ================= -->
+
+<div class="card shadow-sm mb-4">
+
+    <div class="card-header">
+
+        <i class="bi bi-plus-circle"></i>
+
+        Add New Medicine
+
+    </div>
+
+
+    <div class="card-body p-4">
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+
+            <!-- NAME + DOSAGE -->
+
+            <div class="row">
+
+                <!-- MEDICINE NAME -->
+
+                <div class="col-md-6 mb-3">
+
+                    <label class="form-label">
+
+                        Medicine Name
+
+                        <span class="required">*</span>
+
+                    </label>
+
+                    <input
+                        type="text"
+                        name="name"
+                        class="form-control"
+                        placeholder="Enter medicine name"
+                        maxlength="200"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- DOSAGE -->
+
+                <div class="col-md-6 mb-3">
+
+                    <label class="form-label">
+
+                        Dosage
+
+                    </label>
+
+                    <input
+                        type="text"
+                        name="dosage"
+                        class="form-control"
+                        placeholder="Example: As prescribed by doctor"
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- PURPOSE -->
+
+            <div class="mb-3">
+
+                <label class="form-label">
+
+                    Purpose
+
+                </label>
+
+                <textarea
+                    name="purpose"
+                    class="form-control"
+                    placeholder="Enter the purpose of the medicine..."
+                ></textarea>
+
+            </div>
+
+
+            <!-- WARNING -->
+
+            <div class="mb-3">
+
+                <label class="form-label">
+
+                    Warning
+
+                </label>
+
+                <textarea
+                    name="warning"
+                    class="form-control"
+                    placeholder="Enter important warnings or precautions..."
+                ></textarea>
+
+            </div>
+
+
+            <!-- ADD BUTTON -->
+
+            <button
+                type="submit"
+                class="btn btn-add"
+            >
+
+                <i class="bi bi-plus-lg"></i>
+
+                Add Medicine
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- ================= DISPLAY MEDICINES ================= -->
+
+<div class="card shadow-sm">
+
+
+    <!-- HEADER -->
+
+    <div class="card-header d-flex justify-content-between align-items-center">
+
+        <span>
+
+            <i class="bi bi-capsule"></i>
+
+            Medicine List
+
+        </span>
+
+
+        <span class="count-badge">
+
+            {{ medicines|length }} Medicines
+
+        </span>
+
+    </div>
+
+
+    <!-- TABLE -->
+
+    <div class="card-body p-0">
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered table-hover">
+
+
+                <!-- TABLE HEADER -->
+
+                <thead>
+
+                    <tr>
+
+                        <th style="width: 20%;">
+
+                            Medicine Name
+
+                        </th>
+
+                        <th style="width: 20%;">
+
+                            Dosage
+
+                        </th>
+
+                        <th style="width: 30%;">
+
+                            Purpose
+
+                        </th>
+
+                        <th style="width: 30%;">
+
+                            Warning
+
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <!-- TABLE BODY -->
+
+                <tbody>
+
+
+                    {% for medicine in medicines %}
+
+                    <tr>
+
+
+                        <!-- NAME -->
+
+                        <td>
+
+                            <span class="medicine-name">
+
+                                {{ medicine.name }}
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- DOSAGE -->
+
+                        <td>
+
+                            {% if medicine.dosage %}
+
+                                <span class="dosage-badge">
+
+                                    {{ medicine.dosage }}
+
+                                </span>
+
+                            {% else %}
+
+                                <span class="text-muted">
+
+                                    Not specified
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- PURPOSE -->
+
+                        <td>
+
+                            {% if medicine.purpose %}
+
+                                {{ medicine.purpose }}
+
+                            {% else %}
+
+                                <span class="text-muted">
+
+                                    No purpose added
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <!-- WARNING -->
+
+                        <td>
+
+                            {% if medicine.warning %}
+
+                                <div class="warning-box">
+
+                                    <i class="bi bi-exclamation-triangle"></i>
+
+                                    {{ medicine.warning }}
+
+                                </div>
+
+                            {% else %}
+
+                                <span class="text-muted">
+
+                                    No warning added
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                    </tr>
+
+
+                    {% empty %}
+
+
+                    <!-- NO DATA -->
+
+                    <tr>
+
+                        <td
+                            colspan="4"
+                            class="text-center empty-message"
+                        >
+
+                            <i
+                                class="bi bi-capsule"
+                                style="font-size: 40px;"
+                            ></i>
+
+                            <br>
+                            <br>
+
+                            <strong>
+
+                                No medicines found.
+
+                            </strong>
+
+                            <br>
+
+                            Add your first medicine using
+                            the form above.
+
+                        </td>
+
+                    </tr>
+
+
+                    {% endfor %}
+
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+</div>
+
+{% endblock %}

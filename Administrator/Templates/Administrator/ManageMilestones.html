@@ -1,0 +1,517 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+
+    body {
+        background-color: #f5faff;
+        font-family: Arial, sans-serif;
+    }
+
+    .main-container {
+        padding: 30px;
+    }
+
+    .page-title {
+        color: #173b57;
+        font-weight: 700;
+        margin-bottom: 5px;
+    }
+
+    .page-subtitle {
+        color: #6c757d;
+        margin-bottom: 25px;
+    }
+
+    .card {
+        border: 1px solid #d9e3eb;
+        border-radius: 12px;
+        overflow: hidden;
+    }
+
+    .card-header {
+        background-color: #173b57;
+        color: white;
+        font-weight: 600;
+        padding: 15px 20px;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #173b57;
+    }
+
+    .form-control {
+        border: 1px solid #b8c7d3;
+        border-radius: 7px;
+        padding: 10px 12px;
+    }
+
+    .form-control:focus {
+        border-color: #2c6e9e;
+        box-shadow: 0 0 0 0.15rem rgba(44, 110, 158, 0.15);
+    }
+
+    .btn-add {
+        background-color: #2c6e9e;
+        color: white;
+        border: 1px solid #173b57;
+        padding: 10px 22px;
+        font-weight: 600;
+        border-radius: 7px;
+    }
+
+    .btn-add:hover {
+        background-color: #173b57;
+        color: white;
+    }
+
+    .table {
+        margin-bottom: 0;
+        vertical-align: middle;
+    }
+
+    .table thead {
+        background-color: #173b57;
+        color: white;
+    }
+
+    .table thead th {
+        padding: 13px;
+        white-space: nowrap;
+    }
+
+    .table tbody td {
+        padding: 13px;
+    }
+
+    .table tbody tr:hover {
+        background-color: #f1f7fb;
+    }
+
+    .week-badge {
+        display: inline-block;
+        background-color: #e8f3fb;
+        color: #173b57;
+        border: 1px solid #9fc1d8;
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-weight: 600;
+    }
+
+    .empty-message {
+        padding: 35px !important;
+        color: #6c757d;
+    }
+
+    textarea {
+        resize: vertical;
+        min-height: 110px;
+    }
+
+    .required {
+        color: red;
+    }
+
+    .count-badge {
+        background-color: white;
+        color: #173b57;
+        padding: 6px 10px;
+        border-radius: 20px;
+        font-size: 13px;
+    }
+
+    @media (max-width: 768px) {
+
+        .main-container {
+            padding: 15px;
+        }
+
+        .page-title {
+            font-size: 24px;
+        }
+
+        .table {
+            font-size: 13px;
+        }
+
+    }
+
+</style>
+
+<div class="main-container">
+
+<!-- ================= PAGE HEADER ================= -->
+
+<div class="mb-4">
+
+    <h2 class="page-title">
+
+        <i class="bi bi-calendar-heart"></i>
+
+        Manage Pregnancy Milestones
+
+    </h2>
+
+    <p class="page-subtitle">
+
+        Add pregnancy milestones that can be viewed by doctors and users.
+
+    </p>
+
+</div>
+
+
+<!-- ================= SUCCESS / ERROR MESSAGES ================= -->
+
+{% if messages %}
+
+    {% for message in messages %}
+
+        <div
+            class="alert alert-{{ message.tags }} alert-dismissible fade show"
+            role="alert"
+        >
+
+            {{ message }}
+
+            <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+            ></button>
+
+        </div>
+
+    {% endfor %}
+
+{% endif %}
+
+
+<!-- ================= ADD MILESTONE ================= -->
+
+<div class="card shadow-sm mb-4">
+
+    <div class="card-header">
+
+        <i class="bi bi-plus-circle"></i>
+
+        Add New Milestone
+
+    </div>
+
+
+    <div class="card-body p-4">
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+
+            <!-- ================= WEEK + TITLE ================= -->
+
+            <div class="row">
+
+                <!-- WEEK -->
+
+                <div class="col-md-4 mb-3">
+
+                    <label class="form-label">
+
+                        Pregnancy Week
+
+                        <span class="required">*</span>
+
+                    </label>
+
+                    <input
+                        type="number"
+                        name="week"
+                        class="form-control"
+                        placeholder="Enter week (1 - 40)"
+                        min="1"
+                        max="40"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- TITLE -->
+
+                <div class="col-md-8 mb-3">
+
+                    <label class="form-label">
+
+                        Milestone Title
+
+                        <span class="required">*</span>
+
+                    </label>
+
+                    <input
+                        type="text"
+                        name="title"
+                        class="form-control"
+                        placeholder="Example: Baby Development"
+                        maxlength="200"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= DESCRIPTION ================= -->
+
+            <div class="mb-3">
+
+                <label class="form-label">
+
+                    Description
+
+                    <span class="required">*</span>
+
+                </label>
+
+                <textarea
+                    name="description"
+                    class="form-control"
+                    placeholder="Enter milestone description..."
+                    required
+                ></textarea>
+
+            </div>
+
+
+            <!-- ================= TIPS ================= -->
+
+            <div class="mb-3">
+
+                <label class="form-label">
+
+                    Tips
+
+                </label>
+
+                <textarea
+                    name="tips"
+                    class="form-control"
+                    placeholder="Enter useful tips for this pregnancy week..."
+                ></textarea>
+
+            </div>
+
+
+            <!-- ================= ADD BUTTON ================= -->
+
+            <button
+                type="submit"
+                class="btn btn-add"
+            >
+
+                <i class="bi bi-plus-lg"></i>
+
+                Add Milestone
+
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<!-- ================= DISPLAY MILESTONES ================= -->
+
+<div class="card shadow-sm">
+
+
+    <!-- HEADER -->
+
+    <div class="card-header d-flex justify-content-between align-items-center">
+
+        <span>
+
+            <i class="bi bi-list-check"></i>
+
+            Pregnancy Milestones
+
+        </span>
+
+
+        <span class="count-badge">
+
+            {{ milestones|length }} Milestones
+
+        </span>
+
+    </div>
+
+
+    <!-- TABLE -->
+
+    <div class="card-body p-0">
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered table-hover">
+
+
+                <!-- TABLE HEADER -->
+
+                <thead>
+
+                    <tr>
+
+                        <th style="width: 10%;">
+
+                            Week
+
+                        </th>
+
+                        <th style="width: 20%;">
+
+                            Milestone Title
+
+                        </th>
+
+                        <th style="width: 35%;">
+
+                            Description
+
+                        </th>
+
+                        <th style="width: 35%;">
+
+                            Tips
+
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <!-- TABLE BODY -->
+
+                <tbody>
+
+
+                    {% for milestone in milestones %}
+
+                    <tr>
+
+
+                        <!-- WEEK -->
+
+                        <td>
+
+                            <span class="week-badge">
+
+                                Week {{ milestone.week }}
+
+                            </span>
+
+                        </td>
+
+
+                        <!-- TITLE -->
+
+                        <td>
+
+                            <strong>
+
+                                {{ milestone.title }}
+
+                            </strong>
+
+                        </td>
+
+
+                        <!-- DESCRIPTION -->
+
+                        <td>
+
+                            {{ milestone.description }}
+
+                        </td>
+
+
+                        <!-- TIPS -->
+
+                        <td>
+
+                            {% if milestone.tips %}
+
+                                {{ milestone.tips }}
+
+                            {% else %}
+
+                                <span class="text-muted">
+
+                                    No tips added
+
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+
+                    </tr>
+
+
+                    {% empty %}
+
+
+                    <!-- NO DATA -->
+
+                    <tr>
+
+                        <td
+                            colspan="4"
+                            class="text-center empty-message"
+                        >
+
+                            <i
+                                class="bi bi-calendar-x"
+                                style="font-size: 40px;"
+                            ></i>
+
+                            <br>
+                            <br>
+
+                            <strong>
+
+                                No milestones found.
+
+                            </strong>
+
+                            <br>
+
+                            Add your first pregnancy milestone
+                            using the form above.
+
+                        </td>
+
+                    </tr>
+
+
+                    {% endfor %}
+
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+</div>
+
+{% endblock %}

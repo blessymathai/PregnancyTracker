@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport"
+            content="width=device-width, initial-scale=1.0">
+        <title>User Registration | Pregnancy & Baby Tracker</title>
+        <style>
+            *{
+                margin:0;
+                padding:0;
+                box-sizing:border-box;
+                font-family:Arial, sans-serif;
+            }
+            body
+            {
+                min-height:100vh;
+                background:linear-gradient
+                (
+                    135deg,
+                    #ffe5ef,
+                    #f8d9e8
+                );
+                display:flex;
+                justify-content:center;
+                align-items:center;
+                padding:30px;
+            }
+            .container
+            {
+                width:650px;
+                background:white;
+                padding:35px;
+                border-radius:18px;
+                border:1px solid #333333;
+                box-shadow:0 8px 25px rgba(0,0,0,0.15);
+            }
+            .title
+            {
+                text-align:center;
+                margin-bottom:25px;
+            }
+            .title h1
+            {
+                color:#d85b8a;
+                font-size:30px;
+                margin-bottom:8px;
+            }
+            .title p
+            {
+                color:#777;
+                font-size:15px;
+            }
+            table
+            {
+                width:100%;
+                border-collapse:collapse;
+            }
+            td
+            {
+                padding:10px 8px;
+                vertical-align:middle;
+            }
+            td:first-child
+            {
+                width:35%;
+                font-weight:bold;
+                color:#555;
+            }
+            input,
+            textarea,
+            select
+            {
+                width:100%;
+                padding:11px;
+                border:1px solid #333333;
+                border-radius:7px;
+                outline:none;
+                font-size:15px;
+            }
+            input:focus,
+            textarea:focus,
+            select:focus
+            {
+                border-color:#2e2e2e;
+                box-shadow:0 0 4px rgba(6, 6, 6, 0.3);
+            }
+            textarea
+            {
+                height:80px;
+                resize:none;
+            }
+            input[type="file"]
+            {
+                padding:8px;
+            }
+            .buttons
+            {
+                text-align:center;
+                padding-top:20px;
+            }
+            .register-btn
+            {
+                background:#d85b8a;
+                color:white;
+                border:none;
+                padding:12px 28px;
+                border-radius:25px;
+                font-size:16px;
+                font-weight:bold;
+                cursor:pointer;
+                margin-right:8px;
+            }
+            .register-btn:hover
+            {
+                background:#333333;
+            }
+            .reset-btn
+            {
+                background:#9ddcf5;
+                color:#555;
+                border:none;
+                padding:12px 28px;
+                border-radius:25px;
+                font-size:16px;
+                cursor:pointer;
+            }
+            .reset-btn:hover
+            {
+                background:#333333;
+            }
+            .login-link
+            {
+                text-align:center;
+                margin-top:20px;
+                color:#666;
+            }
+            .login-link a
+            {
+                color:#d85b8a;
+                text-decoration:none;
+                font-weight:bold;
+            }
+            .login-link a:hover
+            {
+                text-decoration:underline;
+            }
+            .required
+            {
+                color:red;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <!-- PAGE TITLE -->
+            <div class="title">
+                <h1>🤰 User Registration</h1>
+                <p>
+                    Create your account to start your pregnancy journey
+                </p>
+            </div>
+            <!-- REGISTRATION FORM -->
+            <form action="" method="post" enctype="multipart/form-data">
+                {% csrf_token %}
+                <table>
+                    <!-- NAME -->
+                    <tr>
+                        <td>
+                            Name <span class="required">*</span>
+                        </td>
+                        <td>
+                            <input
+                                type="text"
+                                name="txt_name"
+                                placeholder="Enter your name"
+                                required>
+                        </td>
+
+                    </tr>
+                    <!-- EMAIL -->
+                    <tr>
+                        <td>
+                            Email <span class="required">*</span>
+                        </td>
+                        <td>
+                            <input
+                                type="email"
+                                name="txt_email"
+                                placeholder="Enter your email"
+                                required>
+                        </td>
+                    </tr>
+                    <!-- CONTACT -->
+                    <tr>
+                        <td>
+                            Contact <span class="required">*</span>
+                        </td>
+                        <td>
+                            <input
+                                type="tel"
+                                name="txt_contact"
+                                placeholder="Enter phone number"
+                                pattern="[0-9]{10}"
+                                required>
+                        </td>
+                    </tr>
+                    <!-- ADDRESS -->
+                    <tr>
+                        <td>
+                            Address
+                        </td>
+                        <td>
+                            <textarea
+                                name="txt_Address"
+                                placeholder="Enter your address"></textarea>
+                        </td>
+                    </tr>
+                    <!-- PASSWORD -->
+                    <tr>
+                        <td>
+                            Password <span class="required">*</span>
+                        </td>
+                        <td>
+                            <input
+                                type="password"
+                                name="txt_password"
+                                placeholder="Create password"
+                                minlength="6"
+                                required>
+                        </td>
+                    </tr>
+                    <!-- BUTTONS -->
+                    <tr>
+                        <td colspan="2">
+                            <div class="buttons">
+                                <input
+                                    type="submit"
+                                    name="btn_submit"
+                                    value="Register"
+                                    class="register-btn">
+                                <input
+                                    type="reset"
+                                    name="btn_reset"
+                                    value="Clear"
+                                    class="reset-btn">
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+            <!-- LOGIN -->
+            <div class="login-link">
+                Already have an account?
+                <a href="{% url 'Guest:Login' %}">
+                    Login
+                </a>
+            </div>
+        </div>
+    </body>
+</html>

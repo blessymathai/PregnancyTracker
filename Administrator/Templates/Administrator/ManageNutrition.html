@@ -1,0 +1,136 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <h2>Manage Nutrition</h2>
+
+    <div class="card shadow-sm p-4 mt-4">
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <input
+                type="text"
+                name="name"
+                class="form-control mb-3"
+                placeholder="Food name"
+                required
+            >
+
+            <input
+                type="text"
+                name="category"
+                class="form-control mb-3"
+                placeholder="Category"
+            >
+
+            <input
+                type="number"
+                step="any"
+                name="calories"
+                class="form-control mb-3"
+                placeholder="Calories"
+            >
+
+            <input
+                type="number"
+                step="any"
+                name="protein"
+                class="form-control mb-3"
+                placeholder="Protein"
+            >
+
+            <input
+                type="number"
+                step="any"
+                name="iron"
+                class="form-control mb-3"
+                placeholder="Iron"
+            >
+
+            <input
+                type="number"
+                step="any"
+                name="calcium"
+                class="form-control mb-3"
+                placeholder="Calcium"
+            >
+
+            <input
+                type="number"
+                step="any"
+                name="fiber"
+                class="form-control mb-3"
+                placeholder="Fiber"
+            >
+
+            <textarea
+                name="recommendation"
+                class="form-control mb-3"
+                placeholder="Recommendation"
+            ></textarea>
+
+            <button
+                type="submit"
+                class="btn btn-primary"
+            >
+                Add Nutrition
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <div class="card shadow-sm mt-4">
+
+        <table class="table table-bordered">
+
+            <thead>
+                <tr>
+                    <th>Food</th>
+                    <th>Category</th>
+                    <th>Calories</th>
+                    <th>Protein</th>
+                    <th>Iron</th>
+                    <th>Calcium</th>
+                    <th>Fiber</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for item in nutrition %}
+
+                <tr>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.category }}</td>
+                    <td>{{ item.calories }}</td>
+                    <td>{{ item.protein }}</td>
+                    <td>{{ item.iron }}</td>
+                    <td>{{ item.calcium }}</td>
+                    <td>{{ item.fiber }}</td>
+                </tr>
+
+                {% empty %}
+
+                <tr>
+                    <td colspan="7" class="text-center">
+                        No nutrition data found.
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

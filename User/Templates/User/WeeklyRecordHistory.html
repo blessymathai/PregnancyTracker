@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weekly Record History</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+
+<body>
+    <main class="container py-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+            <h1 class="h2 mb-0">Weekly Record History</h1>
+            <a href="{% url 'User:PregnancyTracker' %}" class="btn btn-outline-primary">Back to Tracker</a>
+        </div>
+
+        {% if selected_week %}
+        <section class="mb-4" aria-labelledby="nutritionHeading">
+            <h2 id="nutritionHeading" class="h4">Week {{ selected_week }} Nutrition Recommendations</h2>
+            {% if nutrition_focus %}
+            <p class="text-primary fw-bold">Focus: {{ nutrition_focus }}</p>
+            {% endif %}
+            <p class="text-muted">Recommendations for Week {{ selected_week }} of pregnancy.</p>
+            {% if weekly_nutrition %}
+            <div class="row g-3">
+                {% for food in weekly_nutrition %}
+                <div class="col-md-6 col-lg-4">
+                    <article class="border rounded p-3 h-100">
+                        <span class="badge text-bg-info mb-2">{{ food.category }}</span>
+                        <h3 class="h6 fw-bold">{{ food.name|default:food.food }}</h3>
+                        <ul class="list-unstyled small mb-2">
+                            <li><strong>Calories:</strong> {{ food.calories }} kcal</li>
+                            <li><strong>Protein:</strong> {{ food.protein }}g</li>
+                            <li><strong>Fiber:</strong> {{ food.fiber }}g</li>
+                            <li><strong>Carbs:</strong> {{ food.carbs }}g</li>
+                            {% if food.fat %}<li><strong>Healthy Fat:</strong> {{ food.fat }}g</li>{% endif %}
+                        </ul>
+                        {% if food.recommendation %}
+                        <p class="small mb-0">{{ food.recommendation }}</p>
+                        {% endif %}
+                    </article>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p>No specific nutrition recommendations are available for this week.</p>
+            {% endif %}
+        </section>
+        <hr class="my-4">
+        {% endif %}
+
+        {% if weekly_records %}
+        <div class="d-grid gap-3">
+            {% for record in weekly_records %}
+            <article class="border rounded p-3">
+                <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+                    <a class="fw-bold" href="{% url 'User:WeeklyRecordHistory' %}?week={{ record.week }}"
+                        aria-label="View recommendations for Week {{ record.week }}">
+                        Week {{ record.week }} recommendations
+                    </a>
+                    {% if record.recorded_at %}
+                    <small class="text-muted">Recorded on {{ record.recorded_at|date:'M d, Y' }}</small>
+                    {% endif %}
+                </div>
+                {% if record.pregnancy %}
+                <p class="small text-muted">Pregnancy starting {{ record.pregnancy.last_period_date|date:'M d, Y' }}</p>
+                {% endif %}
+                {% if record.notes %}
+                <p class="mb-0"><strong>Notes:</strong> {{ record.notes }}</p>
+                {% endif %}
+            </article>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="alert alert-info">No weekly records have been saved yet.</div>
+        {% endif %}
+    </main>
+</body>
+
+</html>

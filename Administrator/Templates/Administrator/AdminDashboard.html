@@ -1,0 +1,481 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Admin Dashboard | Pregnancy & Baby Tracker</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+            body 
+            {
+                font-family: Arial, Helvetica, sans-serif;
+                background: #f4f8fc;
+                color: #263238;
+            }
+            /* SIDEBAR */
+            .sidebar 
+            {
+                position: fixed;
+                left: 0;
+                top: 0;
+                width: 250px;
+                height: 100vh;
+                background: linear-gradient(180deg, #1769aa, #0d4775);
+                color: white;
+                padding: 25px 15px;
+                z-index: 1000;
+            }
+            .logo 
+            {
+                text-align: center;
+                margin-bottom: 35px;
+            }
+            .logo-icon 
+            {
+                width: 65px;
+                height: 65px;
+                background: white;
+                color: #1769aa;
+                border-radius: 50%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin: auto;
+                font-size: 30px;
+            }
+            .logo h4 
+            {
+                margin-top: 12px;
+                font-weight: 700;
+            }
+            .logo p 
+            {
+                font-size: 12px;
+                opacity: .8;
+            }
+            .menu a 
+            {
+                display: flex;
+                align-items: center;
+                gap: 14px;
+                text-decoration: none;
+                color: white;
+                padding: 13px 15px;
+                border-radius: 10px;
+                margin-bottom: 8px;
+                transition: .3s;
+            }
+            .menu a:hover,
+            .menu a.active 
+            {
+                background: rgba(255,255,255,.18);
+            }
+            .menu i 
+            {
+                font-size: 19px;
+            }
+            /* MAIN */
+            .main 
+            {
+                margin-left: 250px;
+                min-height: 100vh;
+            }
+            /* TOPBAR */
+            .topbar 
+            {
+                height: 75px;
+                background: white;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 0 35px;
+                border-bottom: 1px solid #e5eaf0;
+            }
+            .topbar h3 
+            {
+                font-size: 23px;
+                font-weight: 700;
+                margin: 0;
+            }
+            .admin-profile 
+            {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            .admin-avatar 
+            {
+                width: 42px;
+                height: 42px;
+                border-radius: 50%;
+                background: #1769aa;
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            /* CONTENT */
+            .content 
+            {
+                padding: 35px;
+            }
+            .welcome 
+            {
+                background: linear-gradient(110deg, #dff3ff, #eef9ff);
+                border-radius: 20px;
+                padding: 30px;
+                margin-bottom: 30px;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                overflow: hidden;
+            }
+            .welcome h1 
+            {
+                font-size: 30px;
+                font-weight: 700;
+                color: #124e78;
+            }
+            .welcome p 
+            {
+                color: #587080;
+                margin-top: 8px;
+            }
+            .welcome-icon 
+            {
+                font-size: 90px;
+                color: #4ba3d3;
+                margin-right: 40px;
+            }
+            /* CARDS */
+            .stat-card 
+            {
+                background: white;
+                border-radius: 18px;
+                padding: 24px;
+                border: 1px solid #e6edf3;
+                box-shadow: 0 5px 18px rgba(30,70,100,.06);
+                height: 100%;
+                transition: .3s;
+            }
+            .stat-card:hover 
+            {
+                transform: translateY(-5px);
+                box-shadow: 0 10px 25px rgba(30,70,100,.12);
+            }
+            .stat-icon 
+            {
+                width: 52px;
+                height: 52px;
+                border-radius: 14px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 24px;
+                margin-bottom: 15px;
+            }
+            .blue 
+            {
+                background: #e2f2ff;
+                color: #1976b9;
+            }
+            .green 
+            {
+                background: #e4f8ee;
+                color: #23945c;
+            }
+            .orange 
+            {
+                background: #fff0dc;
+                color: #e58a19;
+            }
+            .purple 
+            {
+                background: #eee7ff;
+                color: #7250bd;
+            }
+            .stat-card h2
+            {
+                font-size: 30px;
+                font-weight: 700;
+                margin: 0;
+            }
+            .stat-card p 
+            {
+                margin-top: 5px;
+                color: #71808b;
+            }
+            /* QUICK ACTIONS */
+            .section-title 
+            {
+                margin-top: 35px;
+                margin-bottom: 18px;
+                font-weight: 700;
+                color: #263b48;
+            }
+            .action-card 
+            {
+                background: white;
+                border-radius: 15px;
+                padding: 22px;
+                border: 1px solid #e5ebf0;
+                text-decoration: none;
+                color: #263238;
+                display: block;
+                transition: .3s;
+            }
+            .action-card:hover 
+            {
+                color: #1769aa;
+                transform: translateY(-3px);
+            }
+            .action-card i 
+            {
+                font-size: 28px;
+                color: #1769aa;
+            }
+            .action-card h5 
+            {
+                margin-top: 12px;
+                font-weight: 600;
+            }
+            .action-card p 
+            {
+                font-size: 13px;
+                color: #7b8992;
+            }
+            /* FOOTER */
+            footer 
+            {
+                text-align: center;
+                color: #84919a;
+                padding: 30px;
+                font-size: 13px;
+            }
+            @media(max-width: 900px) 
+            {
+                .sidebar 
+                {
+                    width: 70px;
+                    padding: 20px 8px;
+                }
+                .logo h4,
+                .logo p,
+                .menu span 
+                {
+                    display: none;
+                }
+                .logo-icon 
+                {
+                    width: 45px;
+                    height: 45px;
+                    font-size: 20px;
+                }
+                .main 
+                {
+                    margin-left: 70px;
+                }
+                .welcome-icon 
+                {
+                    display: none;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- SIDEBAR -->
+        <div class="sidebar">
+            <div class="logo">
+                <div class="logo-icon">
+                    <i class="bi bi-heart-pulse-fill"></i>
+                </div>
+                <h4>Pregnancy & Baby</h4>
+                <p>Tracker Admin</p>
+            </div>
+            <div class="menu">
+            <a href="{% url 'Administrator:AdminDashboard' %}" class="active">
+                    <i class="bi bi-grid-fill"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{% url 'Administrator:ManageUser' %}">
+                    <i class="bi bi-people-fill"></i>
+                    <span>Users</span>
+                </a>
+                <a href="{% url 'Administrator:ManageDoctor' %}">
+                    <i class="bi bi-person-badge-fill"></i>
+                    <span>Doctors</span>
+                </a>
+                <a href="{% url 'Administrator:ManageMedicines' %}">
+                    <i class="bi bi-calendar-heart-fill"></i>
+                    <span>Medicines</span>
+                </a>
+                <a href="{% url 'Administrator:ManageMilestones' %}">
+                    <i class="bi bi-calendar-heart-fill"></i>
+                    <span>Milestones</span>
+                </a>
+                <a href="{% url 'Administrator:ManageNutrition' %}">
+                    <i class="bi bi-egg-fill"></i>
+                    <span>Manage Nutrition</span>
+                </a>
+                <a href="{% url 'Administrator:Reports' %}">
+                    <i class="bi bi-bar-chart-fill"></i>
+                    <span>Reports</span>
+                </a>
+                <a href="{% url 'Administrator:ChatBox' %}">
+                    <i class="bi bi-chat-fill"></i>
+                    <span>ChatBox</span>
+                </a>
+                <a href="{% url 'Administrator:UploadDataset' %}">
+                    <i class="bi bi-database-fill"></i>
+                    <span>Dataset</span>
+                </a>
+                <a href="{% url 'Guest:HomePage' %}">
+                    <i class="bi bi-house-fill"></i>
+                    <span>HomePage</span>
+                </a>
+            </div>
+        </div>
+        <!-- MAIN -->
+        <div class="main">
+            <!-- TOP BAR -->
+            <div class="topbar">
+                <h3>Admin Dashboard</h3>
+                <div class="admin-profile">
+                    <div>
+                        <strong>Administrator</strong>
+                        <small class="d-block text-muted">System Admin</small>
+                    </div>
+                    <div class="admin-avatar">
+                        <i class="bi bi-person-fill"></i>
+                    </div>
+                </div>
+            </div>
+            <!-- CONTENT -->
+            <div class="content">
+                <!-- WELCOME -->
+                <div class="welcome">
+                    <div>
+                        <h1>Welcome,Administrator👋</h1>
+                        <p>Manage mothers, doctors, pregnancy records,baby growth and AI-based health predictions.</p>
+                    </div>
+                    <div class="welcome-icon">
+                        <i class="bi bi-person-heart"></i>
+                    </div>
+                </div>
+                <!-- STATISTICS -->
+                <div class="row g-4">
+                    <!-- MOTHERS -->
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stat-card">
+                            <div class="stat-icon blue">
+                                <i class="bi bi-people-fill"></i>
+                            </div>
+                            <p>Total Users</p>
+                        </div>
+                    </div>
+                    <!-- DOCTORS -->
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stat-card">
+                            <div class="stat-icon green">
+                                <i class="bi bi-person-badge-fill"></i>
+                            </div>
+                            <p>Total Doctors</p>
+                        </div>
+                    </div>
+                    <!-- APPOINTMENTS -->
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stat-card">
+                            <div class="stat-icon orange">
+                                <i class="bi bi-calendar-check-fill"></i>
+                            </div>
+                            <p>Appointments</p>
+                        </div>
+                    </div>
+                    <!-- AI -->
+                    <div class="col-lg-3 col-md-6">
+                        <div class="stat-card">
+                            <div class="stat-icon purple">
+                                <i class="bi bi-robot"></i>
+                            </div>
+                            <p>ChatBox</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- QUICK ACTIONS -->
+                <h4 class="section-title">Quick Management</h4>
+                <div class="row g-4">
+                    <div class="col-lg-3 col-md-6">
+                        <a href="{% url 'Administrator:ManageUser' %}" class="action-card">
+                            <i class="bi bi-people-fill"></i>
+                            <h5>Manage Users</h5>
+                            <p>View and manage registered users.</p>
+                        </a>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <a href="{% url 'Administrator:ManageDoctor' %}" class="action-card">
+                            <i class="bi bi-person-badge-fill"></i>
+                            <h5>Manage Doctors</h5>
+                            <p>Add and manage doctors.</p>
+                        </a>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <a href="{% url 'Administrator:ManageMilestones' %}" class="action-card">
+                            <i class="bi bi-calendar-heart-fill"></i>
+                            <h5>Milestones</h5>
+                            <p> Manage pregnancy milestones.</p>
+                        </a>
+                    </div>
+                    <div class="col-lg-3 col-md-6">
+                        <a href="{% url 'Administrator:UploadDataset' %}" class="action-card">
+                            <i class="bi bi-cloud-arrow-up-fill"></i>
+                            <h5>Upload Dataset</h5>
+                            <p>Upload datasets for AI prediction.</p>
+                        </a>
+                    </div>
+                </div>
+                <!-- SYSTEM INFORMATION -->
+                <h4 class="section-title">System Overview</h4>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="stat-card">
+                            <h5>
+                                <i class="bi bi-heart-pulse-fill text-primary"></i>
+                                Pregnancy Monitoring
+                            </h5>
+                            <p class="mt-3">
+                                Monitor pregnancy progress, milestones,
+                                health information and doctor appointments.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="stat-card">
+                            <h5>
+                                <i class="bi bi-robot text-primary"></i>
+                                AI Health Prediction
+                            </h5>
+                            <p class="mt-3">
+                                Machine learning models help identify
+                                maternal health risks and provide
+                                prediction-based support.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- FOOTER -->
+            <footer>
+                © 2026 Pregnancy & Baby Tracker |
+                Admin Panel
+            </footer>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>

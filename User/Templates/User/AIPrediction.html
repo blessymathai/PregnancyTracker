@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Pregnancy Health Screening</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f4f8fb;
+        }
+
+        .ai-card {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 30px;
+            background: white;
+            border: 1px solid #000;
+            border-radius: 12px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="ai-card">
+
+        <h2>
+            Pregnancy Health Screening
+        </h2>
+
+        <p class="text-muted">
+            Guidance based on age, period delay, and reported symptoms.
+        </p>
+
+        <hr>
+
+        {% if error %}
+        <div class="alert alert-danger mb-4" role="alert">
+            <h5 class="alert-heading mb-1"><i class="bi bi-exclamation-triangle-fill"></i> Prediction Error</h5>
+            <p class="mb-0">{{ error }}</p>
+        </div>
+        {% endif %}
+
+        {% if messages %}
+        {% for message in messages %}
+        {% if not error or message.message != error %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags|default:'info' }}{% endif %} mb-4" role="alert">
+            {{ message }}
+        </div>
+        {% endif %}
+        {% endfor %}
+        {% endif %}
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    <label for="age" class="form-label">Age (years) <span class="text-danger">*</span></label>
+                    <input type="number" id="age" name="age"
+                        class="form-control{% if form_errors.age %} is-invalid{% endif %}" min="1" max="120"
+                        step="1" value="{{ form_data.age|default:'' }}" required
+                        aria-invalid="{% if form_errors.age %}true{% else %}false{% endif %}">
+                    {% if form_errors.age %}<div class="invalid-feedback d-block">{{ form_errors.age }}</div>{% endif %}
+                </div>
+
+                <div class="col-md-6 mb-3">
+                    <label for="periodDelay" class="form-label">Period delay (days) <span class="text-danger">*</span></label>
+                    <input type="number" id="periodDelay" name="period_delay_days"
+                        class="form-control{% if form_errors.period_delay_days %} is-invalid{% endif %}"
+                        min="0" max="365" step="1" value="{{ form_data.period_delay_days|default:'' }}"
+                        required aria-invalid="{% if form_errors.period_delay_days %}true{% else %}false{% endif %}">
+                    {% if form_errors.period_delay_days %}<div class="invalid-feedback d-block">{{ form_errors.period_delay_days }}</div>{% endif %}
+                </div>
+            </div>
+
+            <fieldset class="mb-3">
+                <legend class="fs-6 fw-bold">Symptoms <span class="text-danger">*</span></legend>
+                <p class="small text-muted">Select every symptom that applies, or choose No symptoms.</p>
+                <div class="row g-2">
+                    {% for value, label in symptom_options %}
+                    <div class="col-md-6">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" name="symptoms" value="{{ value }}"
+                                id="symptom_{{ value }}" {% if value in form_data.symptoms %}checked{% endif %}>
+                            <label class="form-check-label" for="symptom_{{ value }}">{{ label }}</label>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% if form_errors.symptoms %}<div class="text-danger small mt-1" role="alert">{{ form_errors.symptoms }}</div>{% endif %}
+            </fieldset>
+
+            <div class="d-flex align-items-center gap-2 mt-2">
+                <button type="submit" class="btn btn-primary">
+                    Get Screening Guidance
+                </button>
+                <a href="{% url 'User:UserDashboard' %}" class="btn btn-outline-secondary">
+                    Back to Dashboard
+                </a>
+                <a href="{% url 'User:AIPredictionValues' %}" class="btn btn-outline-primary">
+                    Values-Based Prediction
+                </a>
+            </div>
+
+        </form>
+
+
+        {% if result %}
+
+        <hr class="my-4">
+
+        <div class="alert {% if result.level == 'urgent' %}alert-danger{% elif result.level == 'warning' %}alert-warning{% else %}alert-success{% endif %}">
+            <h4 class="alert-heading">
+                Screening Guidance
+            </h4>
+            {% if result.source %}
+            <!-- <p class="small text-muted">Source: {{ result.source }}</p> -->
+            {% endif %}
+            {% if result.pregnancy_status %}
+            <p class="fs-5"><strong>Pregnancy possibility:</strong> {{ result.pregnancy_status }}</p>
+            {% endif %}
+            <p class="fs-5"><strong>{{ result.label }}</strong></p>
+            {% if result.show_ai_guidance %}
+            <p>{{ result.guidance|linebreaksbr }}</p>
+            {% endif %}
+            {% if result.level == 'urgent' %}
+            <p class="mb-0"><strong>Next step:</strong> Seek urgent medical care now.</p>
+            {% else %}
+            <p class="mb-0"><strong>Next step:</strong> Consult a doctor for advice. A pregnancy test is needed to confirm pregnancy.</p>
+            {% endif %}
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</body>
+
+</html>

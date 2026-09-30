@@ -1,0 +1,843 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pregnancy AI Assistant | Nova</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 20px 15px;
+            background: linear-gradient(135deg, #f4f8fb 0%, #e9f2f8 50%, #fef5f8 100%);
+            font-family: 'Outfit', sans-serif;
+            color: #173b57;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-app-wrapper {
+            width: 100%;
+            max-width: 950px;
+            height: 90vh;
+            max-height: 850px;
+            background: #ffffff;
+            border: 2px solid #000;
+            border-radius: 18px;
+            box-shadow: 0 10px 30px rgba(23, 59, 87, 0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* HEADER */
+        .chat-header {
+            padding: 16px 24px;
+            background: #ffffff;
+            border-bottom: 2px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .bot-profile {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .bot-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #9ddcf5 0%, #f3a6c2 100%);
+            border: 2px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .bot-info h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 700;
+            color: #173b57;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .bot-status {
+            font-size: 13px;
+            color: #555;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 2px;
+        }
+
+        .status-dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 50%;
+            background: #28a745;
+            display: inline-block;
+            box-shadow: 0 0 8px rgba(40, 167, 69, 0.6);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-header {
+            font-size: 13px;
+            font-weight: 600;
+            padding: 7px 14px;
+            border: 1px solid #000;
+            border-radius: 20px;
+            background: #ffffff;
+            color: #000;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-header:hover {
+            background: #f0f7ff;
+            color: #000;
+            transform: translateY(-1px);
+        }
+
+        .btn-header-primary {
+            background: #9ddcf5;
+        }
+
+        .btn-header-primary:hover {
+            background: #78c9e9;
+        }
+
+        /* CONTEXT BANNER */
+        .context-banner {
+            padding: 8px 24px;
+            background: #eef7fd;
+            border-bottom: 1px solid #d4e8f7;
+            font-size: 13px;
+            color: #173b57;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        /* CHAT FEED */
+        .chat-feed {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            background: #fafcfe;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            scroll-behavior: smooth;
+        }
+
+        .message-row {
+            display: flex;
+            gap: 12px;
+            max-width: 82%;
+            animation: fadeIn 0.25s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .message-row.user {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message-row.bot {
+            align-self: flex-start;
+        }
+
+        .msg-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1.5px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+            margin-top: 4px;
+        }
+
+        .msg-avatar.bot-av {
+            background: #fdf0f4;
+        }
+
+        .msg-avatar.user-av {
+            background: #9ddcf5;
+        }
+
+        .msg-bubble {
+            padding: 14px 18px;
+            border-radius: 16px;
+            font-size: 15px;
+            line-height: 1.6;
+            word-wrap: break-word;
+            border: 1.5px solid #000;
+        }
+
+        .message-row.user .msg-bubble {
+            background: #dff2fc;
+            color: #0b253a;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-row.bot .msg-bubble {
+            background: #ffffff;
+            color: #1a2530;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        }
+
+        .msg-bubble p:last-child {
+            margin-bottom: 0;
+        }
+
+        .msg-bubble ul,
+        .msg-bubble ol {
+            padding-left: 20px;
+            margin-bottom: 8px;
+        }
+
+        .msg-bubble li {
+            margin-bottom: 4px;
+        }
+
+        .msg-meta {
+            font-size: 11px;
+            color: #777;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .message-row.user .msg-meta {
+            justify-content: flex-end;
+        }
+
+        .badge-model {
+            background: #eef5fa;
+            border: 1px solid #c9dfec;
+            color: #173b57;
+            padding: 2px 7px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        /* TYPING INDICATOR */
+        .typing-indicator {
+            display: none;
+            align-self: flex-start;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .typing-bubble {
+            background: #ffffff;
+            border: 1.5px solid #000;
+            padding: 12px 18px;
+            border-radius: 16px;
+            border-bottom-left-radius: 4px;
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #2c6e9e;
+            border-radius: 50%;
+            animation: bounce 1.3s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes bounce {
+
+            0%,
+            60%,
+            100% {
+                transform: translateY(0);
+            }
+
+            30% {
+                transform: translateY(-7px);
+            }
+        }
+
+        /* SUGGESTION CHIPS */
+        .suggestions-bar {
+            padding: 10px 20px;
+            background: #ffffff;
+            border-top: 1px solid #e1ecf4;
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            white-space: nowrap;
+            scrollbar-width: none;
+        }
+
+        .suggestions-bar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .chip-btn {
+            background: #f2f8fc;
+            border: 1px solid #cce4f5;
+            color: #173b57;
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .chip-btn:hover {
+            background: #9ddcf5;
+            border-color: #000;
+            color: #000;
+        }
+
+        /* CHAT INPUT AREA */
+        .chat-input-wrapper {
+            padding: 16px 20px;
+            background: #ffffff;
+            border-top: 2px solid #000;
+        }
+
+        .input-form {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .input-control {
+            flex: 1;
+            padding: 13px 18px;
+            font-size: 15px;
+            border: 2px solid #000;
+            border-radius: 28px;
+            outline: none;
+            font-family: inherit;
+            transition: border-color 0.2s;
+        }
+
+        .input-control:focus {
+            border-color: #2c6e9e;
+            box-shadow: 0 0 0 3px rgba(157, 220, 245, 0.4);
+        }
+
+        .btn-send {
+            background: #9ddcf5;
+            color: #000;
+            border: 2px solid #000;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .btn-send:hover {
+            background: #78c9e9;
+            transform: scale(1.05);
+        }
+
+        .btn-send:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .chat-disclaimer {
+            text-align: center;
+            font-size: 11px;
+            color: #888;
+            margin-top: 8px;
+        }
+
+        /* MODAL STYLING */
+        .modal-content {
+            border: 2px solid #000;
+            border-radius: 14px;
+        }
+
+        .modal-header {
+            border-bottom: 2px solid #000;
+            background: #eef7fd;
+        }
+
+        .modal-footer {
+            border-top: 1px solid #ccc;
+        }
+
+        @media (max-width: 650px) {
+            body {
+                padding: 5px;
+            }
+
+            .chat-app-wrapper {
+                height: 98vh;
+                border-radius: 10px;
+            }
+
+            .message-row {
+                max-width: 92%;
+            }
+
+            .chat-feed {
+                padding: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="chat-app-wrapper">
+
+        <!-- ================= CHAT HEADER ================= -->
+        <header class="chat-header">
+            <div class="bot-profile">
+                <div class="bot-avatar">✨</div>
+                <div class="bot-info">
+                    <h3>
+                        Nova
+                        <span class="badge"
+                            style="background: #2c6e9e; color: white; font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 8px;">
+                            Pregnancy AI
+                        </span>
+                    </h3>
+                    <!-- <div class="bot-status">
+                        <span class="status-dot"></span>
+                        <span>Google Gemini Free Flash (Active)</span>
+                    </div> -->
+                </div>
+            </div>
+
+            <div class="header-actions">
+                <button type="button" class="btn-header" onclick="clearChatHistory()" title="Clear conversation">
+                    🗑️ Clear Chat
+                </button>
+
+                <a href="{% url 'User:UserDashboard' %}" class="btn-header btn-header-primary">
+                    ⬅️ Dashboard
+                </a>
+            </div>
+        </header>
+
+        <!-- ================= CONTEXT BANNER ================= -->
+        <div class="context-banner">
+            <div>
+                👋 Hi <strong>{{ user.user_name }}</strong>
+                {% if pregnancy_week %}
+                • 🤰 Currently at <strong>Week {{ pregnancy_week }}</strong>
+                {% if pregnancy.expected_delivery_date %}
+                (Due: <strong>{{ pregnancy.expected_delivery_date|date:'M d, Y' }}</strong>)
+                {% endif %}
+                {% endif %}
+            </div>
+            <div class="text-muted small">
+                Nova tailors answers to your maternal timeline
+            </div>
+        </div>
+
+        <!-- ================= CHAT FEED ================= -->
+        <main class="chat-feed" id="chatFeed">
+
+            <!-- Initial Nova Welcome Message -->
+            <div class="message-row bot">
+                <div class="msg-avatar bot-av">✨</div>
+                <div class="msg-content-wrapper">
+                    <div class="msg-bubble">
+                        <p class="mb-2">
+                            Hello <strong>{{ user.user_name }}</strong>! I am <strong>Nova</strong>, your AI Pregnancy &
+                            Maternal Health Assistant.
+                        </p>
+                        <p class="mb-2">
+                            {% if pregnancy_week %}
+                            I see you're currently in <strong>Week {{ pregnancy_week }}</strong> of your pregnancy! I am
+                            here to help you navigate:
+                            {% else %}
+                            I am here to support you with trustworthy guidance on:
+                            {% endif %}
+                        </p>
+                        <ul class="mb-2">
+                            <li>🥗 <strong>Weekly Nutrition:</strong> Superfoods to enjoy and items to avoid</li>
+                            <li>🤰 <strong>Symptoms & Relief:</strong> Nausea, back pain, cramps, and sleep tips</li>
+                            <li>🦶 <strong>Baby Milestones:</strong> Kicks, fetal growth, and bodily changes</li>
+                            <li>⚠️ <strong>Safety Triage:</strong> Distinguishing normal aches from urgent red flags
+                            </li>
+                            <li>🏥 <strong>Labor Preparation:</strong> Contractions, birth bags, and delivery prep</li>
+                        </ul>
+                        <p class="mb-0 text-muted small">
+                            <em>Click any topic below or type your question to start!</em>
+                        </p>
+                    </div>
+                    <div class="msg-meta">
+                        <span class="badge-model">Nova Clinical AI</span>
+                        <span>Welcome</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stored Chat History from Database -->
+            {% for chat in chat_history %}
+            {% if chat.sender == 'USER' %}
+            <div class="message-row user">
+                <div class="msg-avatar user-av">👤</div>
+                <div class="msg-content-wrapper">
+                    <div class="msg-bubble">
+                        {{ chat.message|linebreaksbr }}
+                    </div>
+                    <div class="msg-meta">
+                        <span>{{ chat.created_at|date:'h:i A' }}</span>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="message-row bot">
+                <div class="msg-avatar bot-av">✨</div>
+                <div class="msg-content-wrapper">
+                    <div class="msg-bubble">
+                        {{ chat.message|linebreaksbr }}
+                    </div>
+                    <div class="msg-meta">
+                        <span class="badge-model">Pregnancy Assistant</span>
+                        <span>{{ chat.created_at|date:'h:i A' }}</span>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+            {% endfor %}
+
+            <!-- Typing Indicator (Hidden by default) -->
+            <div class="typing-indicator" id="typingIndicator">
+                <div class="msg-avatar bot-av">✨</div>
+                <div class="typing-bubble">
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                    <span class="typing-dot"></span>
+                    <span class="small text-muted ms-2">Nova is writing...</span>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- ================= SUGGESTIONS BAR ================= -->
+        <div class="suggestions-bar">
+            <button type="button" class="chip-btn"
+                onclick="sendSuggestion('What foods should I eat vs avoid in my current week?')">
+                🥗 Foods to eat & avoid
+            </button>
+            <button type="button" class="chip-btn"
+                onclick="sendSuggestion('How can I naturally relieve pregnancy nausea and morning sickness?')">
+                🤢 Relieve morning sickness
+            </button>
+            <button type="button" class="chip-btn"
+                onclick="sendSuggestion('When will I feel baby\'s first kicks and how do I count kicks?')">
+                🦶 Baby kicks timeline
+            </button>
+            <button type="button" class="chip-btn"
+                onclick="sendSuggestion('What are emergency warning signs during pregnancy to see a doctor?')">
+                🚨 Danger warning signs
+            </button>
+            <button type="button" class="chip-btn"
+                onclick="sendSuggestion('Which pain medications and cold remedies are safe during pregnancy?')">
+                💊 Safe medications
+            </button>
+            <button type="button" class="chip-btn"
+                onclick="sendSuggestion('How do I know if I am having true labor contractions or Braxton Hicks?')">
+                ⏱️ Signs of true labor
+            </button>
+            <button type="button" class="chip-btn"
+                onclick="sendSuggestion('What safe exercises can I do during pregnancy?')">
+                🏃 Safe prenatal exercises
+            </button>
+        </div>
+
+        <!-- ================= CHAT INPUT ================= -->
+        <footer class="chat-input-wrapper">
+            <form id="chatForm" class="input-form" onsubmit="handleChatSubmit(event)">
+                {% csrf_token %}
+                <input type="text" id="userMessageInput" class="input-control"
+                    placeholder="Ask Nova about symptoms, food, kicks, contractions, or milestones..."
+                    autocomplete="off" required>
+                <button type="submit" id="sendBtn" class="btn-send" title="Send message">
+                    ➤
+                </button>
+            </form>
+            <div class="chat-disclaimer">
+                ℹ️ Educational AI guidance. In case of severe bleeding, pain, or reduced fetal movement, contact your
+                obstetrician immediately.
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- ================= JAVASCRIPT ================= -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const chatFeed = document.getElementById("chatFeed");
+        const chatForm = document.getElementById("chatForm");
+        const userMessageInput = document.getElementById("userMessageInput");
+        const sendBtn = document.getElementById("sendBtn");
+        const typingIndicator = document.getElementById("typingIndicator");
+
+        // Scroll chat feed to bottom
+        function scrollToBottom() {
+            chatFeed.scrollTop = chatFeed.scrollHeight;
+        }
+
+        window.addEventListener("DOMContentLoaded", () => {
+            scrollToBottom();
+            userMessageInput.focus();
+        });
+
+        // Quick Suggestion Chips click
+        function sendSuggestion(question) {
+            userMessageInput.value = question;
+            chatForm.dispatchEvent(new Event("submit", { cancelable: true, bubbles: true }));
+        }
+
+        // Format bot text (converts markdown bold and bullets cleanly)
+        function formatBotResponse(text) {
+            if (!text) return "";
+            let escaped = text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+
+            // Bold
+            escaped = escaped.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+            // Italics
+            escaped = escaped.replace(/\*(.*?)\*/g, "<em>$1</em>");
+            // Bullet points
+            let lines = escaped.split("\n");
+            let inList = false;
+            let result = [];
+
+            for (let line of lines) {
+                let trimmed = line.trim();
+                if (trimmed.startsWith("- ") || trimmed.startsWith("• ")) {
+                    if (!inList) {
+                        result.push("<ul class='my-1 ps-3'>");
+                        inList = true;
+                    }
+                    result.push("<li>" + trimmed.substring(2) + "</li>");
+                } else if (trimmed.match(/^\d+\.\s/)) {
+                    if (!inList) {
+                        result.push("<ol class='my-1 ps-3'>");
+                        inList = true;
+                    }
+                    result.push("<li>" + trimmed.replace(/^\d+\.\s/, "") + "</li>");
+                } else {
+                    if (inList) {
+                        result.push(result[result.length - 1].startsWith("<ol") ? "</ol>" : "</ul>");
+                        inList = false;
+                    }
+                    if (trimmed.length > 0) {
+                        result.push("<p class='mb-2'>" + line + "</p>");
+                    }
+                }
+            }
+            if (inList) {
+                result.push("</ul>");
+            }
+            return result.join("");
+        }
+
+        // Handle sending message
+        async function handleChatSubmit(e) {
+            e.preventDefault();
+            const message = userMessageInput.value.trim();
+            if (!message) return;
+
+            // 1. Append user message to UI immediately
+            appendUserMessage(message);
+            userMessageInput.value = "";
+            userMessageInput.disabled = true;
+            sendBtn.disabled = true;
+
+            // 2. Show typing indicator
+            typingIndicator.style.display = "flex";
+            scrollToBottom();
+
+            // 3. Send request to server via fetch
+            try {
+                const response = await fetch("{% url 'User:AIChatbot' %}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-Requested-With": "XMLHttpRequest",
+                        "X-CSRFToken": getCsrfToken()
+                    },
+                    body: JSON.stringify({
+                        action: "send_message",
+                        message: message
+                    })
+                });
+
+                const data = await response.json();
+                typingIndicator.style.display = "none";
+
+                if (data.status === "success") {
+                    appendBotMessage(data.reply, data.model || "Gemini Flash AI", data.created_at);
+                } else {
+                    appendBotMessage("⚠️ " + (data.message || "An error occurred while answering. Please try again."), "System", "Now");
+                }
+            } catch (err) {
+                typingIndicator.style.display = "none";
+                appendBotMessage("⚠️ Network error communicating with pregnancy AI. Please check your connection.", "Offline", "Now");
+            } finally {
+                userMessageInput.disabled = false;
+                sendBtn.disabled = false;
+                userMessageInput.focus();
+                scrollToBottom();
+            }
+        }
+
+        function appendUserMessage(text) {
+            const timeNow = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const row = document.createElement("div");
+            row.className = "message-row user";
+            row.innerHTML = `
+                <div class="msg-avatar user-av">👤</div>
+                <div class="msg-content-wrapper">
+                    <div class="msg-bubble">${escapeHtml(text)}</div>
+                    <div class="msg-meta"><span>${timeNow}</span></div>
+                </div>
+            `;
+            chatFeed.insertBefore(row, typingIndicator);
+            scrollToBottom();
+        }
+
+        function appendBotMessage(text, modelName, timestamp) {
+            const row = document.createElement("div");
+            row.className = "message-row bot";
+            const formatted = formatBotResponse(text);
+            row.innerHTML = `
+                <div class="msg-avatar bot-av">✨</div>
+                <div class="msg-content-wrapper">
+                    <div class="msg-bubble">${formatted}</div>
+                    <div class="msg-meta">
+                        <span class="badge-model">${escapeHtml(modelName)}</span>
+                        <span>${timestamp || "Just now"}</span>
+                    </div>
+                </div>
+            `;
+            chatFeed.insertBefore(row, typingIndicator);
+            scrollToBottom();
+        }
+
+        function escapeHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+        }
+
+        function getCsrfToken() {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, 10) === ('csrftoken=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(10));
+                        break;
+                    }
+                }
+            }
+            return cookieValue || document.querySelector('[name=csrfmiddlewaretoken]')?.value || '';
+        }
+
+        // Clear Chat History
+        async function clearChatHistory() {
+            if (!confirm("Are you sure you want to clear your conversation history?")) return;
+
+            try {
+                const response = await fetch("{% url 'User:AIChatbot' %}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-Requested-With": "XMLHttpRequest",
+                        "X-CSRFToken": getCsrfToken()
+                    },
+                    body: JSON.stringify({
+                        action: "clear_chat"
+                    })
+                });
+                const res = await response.json();
+                if (res.status === "success") {
+                    window.location.reload();
+                }
+            } catch (e) {
+                alert("Error clearing chat.");
+            }
+        }
+    </script>
+
+</body>
+
+</html>

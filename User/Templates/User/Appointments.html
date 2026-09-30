@@ -1,0 +1,547 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appointments | Pregnancy & Baby Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4A90E2;
+            --primary-hover: #357ABD;
+            --bg-page: #F4F7FC;
+            --card-bg: #FFFFFF;
+            --text-main: #2D3748;
+            --text-muted: #718096;
+            --border-color: #E2E8F0;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        .container {
+            max-width: 1050px;
+            margin: 0 auto;
+        }
+
+        /* Top Header Bar */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .top-bar h1 {
+            font-size: 26px;
+            font-weight: 800;
+            color: #1E293B;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 18px;
+            background: #FFFFFF;
+            color: #475569;
+            border: 1.5px solid var(--border-color);
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+            transition: all 0.2s ease;
+        }
+
+        .btn-back:hover {
+            background: #E2E8F0;
+            color: #0F172A;
+        }
+
+        /* Policy Notice */
+        .policy-notice {
+            background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+            border: 1px solid #BFDBFE;
+            border-radius: 16px;
+            padding: 16px 20px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        .policy-notice-icon {
+            font-size: 24px;
+            line-height: 1;
+        }
+
+        .policy-notice-text {
+            font-size: 13.5px;
+            color: #1E40AF;
+            line-height: 1.5;
+        }
+
+        .policy-notice-text strong {
+            font-weight: 700;
+        }
+
+        /* Flash Messages */
+        .alert-box {
+            margin-bottom: 20px;
+        }
+
+        .alert {
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .alert-success {
+            background: #ECFDF5;
+            color: #065F46;
+            border: 1px solid #A7F3D0;
+        }
+
+        .alert-error {
+            background: #FEF2F2;
+            color: #991B1B;
+            border: 1px solid #FECACA;
+        }
+
+        /* Grid Layout */
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            gap: 25px;
+            align-items: start;
+        }
+
+        @media (max-width: 900px) {
+            .layout-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Card */
+        .card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border-color);
+        }
+
+        .card-header {
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #F1F5F9;
+        }
+
+        .card-header h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1E293B;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Form Inputs */
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            font-size: 12.5px;
+            font-weight: 700;
+            color: #475569;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        select, input[type="date"], input[type="time"], textarea {
+            width: 100%;
+            padding: 11px 13px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: inherit;
+            color: var(--text-main);
+            background: #FFFFFF;
+            transition: all 0.2s ease;
+        }
+
+        select:focus, input:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.15);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 12px;
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(74, 144, 226, 0.4);
+        }
+
+        /* Table */
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        th {
+            background: #F8FAFC;
+            color: #64748B;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            padding: 12px 14px;
+            border-bottom: 2px solid #E2E8F0;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 14px;
+            font-size: 13.5px;
+            color: #334155;
+            border-bottom: 1px solid #F1F5F9;
+            vertical-align: middle;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover td {
+            background-color: #F8FAFC;
+        }
+
+        .doctor-name {
+            font-weight: 700;
+            color: #1E293B;
+        }
+
+        .doctor-spec {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* Status Badges */
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 11px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .badge-pending {
+            background: #FEF3C7;
+            color: #92400E;
+            border: 1px solid #FDE68A;
+        }
+
+        .badge-approved {
+            background: #D1FAE5;
+            color: #065F46;
+            border: 1px solid #A7F3D0;
+        }
+
+        .badge-rejected {
+            background: #FEE2E2;
+            color: #991B1B;
+            border: 1px solid #FECACA;
+        }
+
+        .badge-completed {
+            background: #E0E7FF;
+            color: #3730A3;
+            border: 1px solid #C7D2FE;
+        }
+
+        /* Action Buttons */
+        .btn-chat {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 14px;
+            background: #10B981;
+            color: #ffffff;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.25);
+            white-space: nowrap;
+        }
+
+        .btn-chat:hover {
+            background: #059669;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+        }
+
+        .badge-waiting {
+            display: inline-block;
+            font-size: 11.5px;
+            color: #94A3B8;
+            font-style: italic;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-muted);
+        }
+
+        .empty-state-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <h1>📅 Doctor Appointments</h1>
+        <a href="{% url 'User:UserDashboard' %}" class="btn-back">
+            🏠 Back to Dashboard
+        </a>
+    </div>
+
+    <!-- Policy Notice -->
+    <div class="policy-notice">
+        <div class="policy-notice-icon">💬</div>
+        <div class="policy-notice-text">
+            <strong>Doctor Messaging Rule:</strong> You can chat with a doctor once your booked appointment is <strong>confirmed (accepted)</strong> by the doctor. Once confirmed, a <strong>"Chat with Doctor"</strong> button will appear right next to your appointment!
+        </div>
+    </div>
+
+    <!-- Django Messages -->
+    {% if messages %}
+        <div class="alert-box">
+            {% for message in messages %}
+                <div class="alert {% if message.tags == 'error' %}alert-error{% else %}alert-success{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="layout-grid">
+        <!-- Booking Card -->
+        <div class="card">
+            <div class="card-header">
+                <h2>➕ Book Appointment</h2>
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <!-- Select Doctor -->
+                <div class="form-group">
+                    <label for="doctor_id">Select Doctor *</label>
+                    <select name="doctor_id" id="doctor_id" required>
+                        <option value="">-- Choose a Doctor --</option>
+                        {% for doctor in doctors %}
+                            <option value="{{ doctor.id }}">
+                                Dr. {{ doctor.name }} ({{ doctor.specialization }})
+                            </option>
+                        {% empty %}
+                            <option value="" disabled>No doctors available currently</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <!-- Date -->
+                <div class="form-group">
+                    <label for="appointment_date">Appointment Date *</label>
+                    <input type="date" name="appointment_date" id="appointment_date" required>
+                </div>
+
+                <!-- Time -->
+                <div class="form-group">
+                    <label for="appointment_time">Preferred Time *</label>
+                    <input type="time" name="appointment_time" id="appointment_time" required>
+                </div>
+
+                <!-- Reason -->
+                <div class="form-group">
+                    <label for="reason">Reason / Health Concern</label>
+                    <textarea 
+                        name="reason" 
+                        id="reason" 
+                        rows="3" 
+                        placeholder="e.g. 2nd trimester routine ultrasound checkup, nausea consultation..."
+                    ></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    📅 Confirm & Book Appointment
+                </button>
+            </form>
+        </div>
+
+        <!-- My Appointments Card -->
+        <div class="card">
+            <div class="card-header">
+                <h2>📋 My Appointments & Chat Status</h2>
+            </div>
+
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Doctor</th>
+                            <th>Date & Time</th>
+                            <th>Reason</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for appointment in appointments %}
+                            <tr>
+                                <td>
+                                    <div class="doctor-name">
+                                        Dr. {{ appointment.doctor.name }}
+                                    </div>
+                                    <div class="doctor-spec">
+                                        {{ appointment.doctor.specialization }}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div>{{ appointment.appointment_date|date:"d M Y" }}</div>
+                                    <div class="text-muted" style="font-size: 12px;">
+                                        {{ appointment.appointment_time|time:"h:i A" }}
+                                    </div>
+                                </td>
+                                <td>
+                                    {{ appointment.reason|default:"Routine consultation"|truncatechars:35 }}
+                                </td>
+                                <td>
+                                    {% if appointment.status == "Pending" %}
+                                        <span class="badge badge-pending">
+                                            ⏳ Pending
+                                        </span>
+                                    {% elif appointment.status == "Approved" %}
+                                        <span class="badge badge-approved">
+                                            ✅ Confirmed
+                                        </span>
+                                    {% elif appointment.status == "Rejected" %}
+                                        <span class="badge badge-rejected">
+                                            ❌ Rejected
+                                        </span>
+                                    {% elif appointment.status == "Completed" %}
+                                        <span class="badge badge-completed">
+                                            Completed
+                                        </span>
+                                    {% else %}
+                                        <span class="badge">
+                                            {{ appointment.status }}
+                                        </span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if appointment.status == "Approved" %}
+                                        <a href="{% url 'User:Messages' %}?doctor={{ appointment.doctor.id }}" class="btn-chat">
+                                            💬 Chat Now
+                                        </a>
+                                    {% elif appointment.status == "Pending" %}
+                                        <span class="badge-waiting">
+                                            Chat unlocks on doctor confirmation
+                                        </span>
+                                    {% else %}
+                                        <span class="text-muted" style="font-size: 12px;">-</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="5">
+                                    <div class="empty-state">
+                                        <div class="empty-state-icon">📋</div>
+                                        <p>You have not booked any appointments yet.</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Restrict appointment date to today or later
+    const dateInput = document.getElementById('appointment_date');
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    dateInput.min = `${yyyy}-${mm}-${dd}`;
+</script>
+
+</body>
+</html>

@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <h2>Manage Doctors</h2>
+
+    <div class="card shadow-sm mt-4">
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered">
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Doctor</th>
+                        <th>Specialization</th>
+                        <th>Qualification</th>
+                        <th>Contact</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for doctor in doctors %}
+
+                    <tr>
+                        <td>{{ doctor.id }}</td>
+                        <td>Dr. {{ doctor.doctor_name }}</td>
+                        <td>{{ doctor.specialization }}</td>
+                        <td>{{ doctor.qualification }}</td>
+                        <td>{{ doctor.contact }}</td>
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+                        <td colspan="5" class="text-center">
+                            No doctors found.
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

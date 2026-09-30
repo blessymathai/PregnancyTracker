@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Values-Based Maternal Risk Prediction</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: #f4f8fb;
+        }
+
+        .ai-card {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 30px;
+            background: white;
+            border: 1px solid #000;
+            border-radius: 12px;
+        }
+    </style>
+
+</head>
+
+<body>
+
+    <div class="ai-card">
+
+        <h2>
+            Values-Based Maternal Risk Prediction
+        </h2>
+
+        <p class="text-muted">
+            Enter vital-sign values for the trained maternal risk model.
+        </p>
+
+        <a href="{% url 'User:AIPrediction' %}" class="btn btn-outline-primary mb-3">
+            Switch to Symptom-Based Screening
+        </a>
+
+        <hr>
+
+        {% if error %}
+        <div class="alert alert-danger mb-4" role="alert">
+            <h5 class="alert-heading mb-1"><i class="bi bi-exclamation-triangle-fill"></i> Prediction Error</h5>
+            <p class="mb-0">{{ error }}</p>
+        </div>
+        {% endif %}
+
+        {% if messages %}
+        {% for message in messages %}
+        {% if not error or message.message != error %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags|default:'info' }}{% endif %} mb-4" role="alert">
+            {{ message }}
+        </div>
+        {% endif %}
+        {% endfor %}
+        {% endif %}
+
+        <form method="POST">
+
+            {% csrf_token %}
+
+            <div class="row">
+
+                <div class="col-md-6 mb-3">
+
+                    <label class="form-label" for="age">Age (years)</label>
+                    <input type="number" id="age" name="age" min="10" max="70" step="1"
+                        class="form-control{% if form_errors.age %} is-invalid{% endif %}"
+                        value="{{ form_data.age|default:'' }}" required>
+                    {% if form_errors.age %}<div class="invalid-feedback d-block">{{ form_errors.age }}</div>{% endif %}
+
+                </div>
+
+
+                <div class="col-md-6 mb-3">
+
+                    <label class="form-label" for="systolic">Systolic BP (mmHg)</label>
+                    <input type="number" id="systolic" name="systolic" min="60" max="220" step="1"
+                        class="form-control{% if form_errors.systolic %} is-invalid{% endif %}"
+                        value="{{ form_data.systolic|default:'' }}" required>
+                    {% if form_errors.systolic %}<div class="invalid-feedback d-block">{{ form_errors.systolic }}</div>{% endif %}
+
+                </div>
+
+
+                <div class="col-md-6 mb-3">
+
+                    <label class="form-label" for="diastolic">Diastolic BP (mmHg)</label>
+                    <input type="number" id="diastolic" name="diastolic" min="30" max="150" step="1"
+                        class="form-control{% if form_errors.diastolic %} is-invalid{% endif %}"
+                        value="{{ form_data.diastolic|default:'' }}" required>
+                    {% if form_errors.diastolic %}<div class="invalid-feedback d-block">{{ form_errors.diastolic }}</div>{% endif %}
+
+                </div>
+
+
+                <div class="col-md-6 mb-3">
+
+                    <label class="form-label" for="bloodSugar">Blood Sugar (mmol/L)</label>
+                    <input type="number" id="bloodSugar" name="blood_sugar" min="1" max="30" step="0.01"
+                        class="form-control{% if form_errors.blood_sugar %} is-invalid{% endif %}"
+                        value="{{ form_data.blood_sugar|default:'' }}" required>
+                    {% if form_errors.blood_sugar %}<div class="invalid-feedback d-block">{{ form_errors.blood_sugar }}</div>{% endif %}
+
+                </div>
+
+
+                <div class="col-md-6 mb-3">
+
+                    <label class="form-label" for="bodyTemperature">Body Temperature (°F)</label>
+                    <input type="number" id="bodyTemperature" name="body_temperature" min="90" max="110" step="0.01"
+                        class="form-control{% if form_errors.body_temperature %} is-invalid{% endif %}"
+                        value="{{ form_data.body_temperature|default:'' }}" required>
+                    {% if form_errors.body_temperature %}<div class="invalid-feedback d-block">{{ form_errors.body_temperature }}</div>{% endif %}
+
+                </div>
+
+
+                <div class="col-md-6 mb-3">
+
+                    <label class="form-label" for="heartRate">Heart Rate (bpm)</label>
+                    <input type="number" id="heartRate" name="heart_rate" min="30" max="220" step="1"
+                        class="form-control{% if form_errors.heart_rate %} is-invalid{% endif %}"
+                        value="{{ form_data.heart_rate|default:'' }}" required>
+                    {% if form_errors.heart_rate %}<div class="invalid-feedback d-block">{{ form_errors.heart_rate }}</div>{% endif %}
+
+                </div>
+
+            </div>
+
+
+            <div class="d-flex align-items-center gap-2 mt-2">
+                <button type="submit" class="btn btn-primary">
+                    Predict Maternal Risk
+                </button>
+                <a href="{% url 'User:UserDashboard' %}" class="btn btn-outline-secondary">
+                    Back to Dashboard
+                </a>
+            </div>
+
+        </form>
+
+
+        {% if result %}
+
+        <hr class="my-4">
+
+        <div class="alert {% if 'High' in result.label %}alert-danger{% elif 'Mid' in result.label %}alert-warning{% else %}alert-success{% endif %}">
+
+            <h4 class="alert-heading">
+                AI Prediction Result
+            </h4>
+
+            <p class="fs-5 mb-1">
+                <strong>Risk Level: {{ result.label }}</strong>
+            </p>
+
+            {% if 'High' in result.label %}
+            <p class="mb-2"><strong>Next step:</strong> Please consult a doctor promptly to review this result.</p>
+            <p class="small mb-0">This model prediction is not a diagnosis.</p>
+            {% endif %}
+
+            {% if result.confidence %}
+            <p class="mb-0 text-muted">
+                Model confidence: {{ result.confidence }}%
+            </p>
+            {% endif %}
+
+            {% if result.error %}
+            <div class="text-danger mt-2 font-weight-bold">{{ result.error }}</div>
+            {% endif %}
+
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,295 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Pregnancy & Baby Tracker</title>
+        <style>
+            *{
+                margin:0;
+                padding:0;
+                box-sizing:border-box;
+                font-family:Arial, sans-serif;  
+            }
+            body
+            {
+                background:#fff7fb;
+            }
+            /* HEADER */
+            header
+            {
+                background:#1b1a1a;
+                color:white;
+                padding:18px 50px;
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+            }
+            header h2
+            {
+                font-size:25px;
+            }
+            nav a
+            {
+                color:white;
+                text-decoration:none;
+                margin-left:25px;
+                font-size:16px;
+                font-weight:bold;
+            }
+            nav a:hover
+            {
+                color:#efdae2;
+            }
+            /* HERO */
+            .hero
+            {
+                height:150vh;
+                display:flex;
+                justify-content:center;
+                align-items:center;
+                text-align:center;
+                background:
+                linear-gradient(
+                    rgba(219, 141, 170, 0.65),
+                    rgba(241, 238, 239, 0.65)
+                ),
+                url("{% static 'Images/PregnancyMother.png' %}");
+                background-size:cover;
+                background-position:center;
+                color:rgb(14, 14, 14);
+                padding:30px;
+            }
+            .hero-content
+            {
+                max-width:800px;
+            }
+            .hero h1
+            {
+                font-size:48px;
+                margin-bottom:20px;
+            }
+            .hero p
+            {
+                font-size:19px;
+                line-height:1.7;
+                margin-bottom:30px;
+            }
+            .btn
+            {
+                display:inline-block;
+                padding:13px 30px;
+                margin:5px;
+                border-radius:25px;
+                background:white;
+                color:#060606;
+                text-decoration:none;
+                font-size:17px;
+                font-weight:bold;
+            }
+            .btn:hover
+            {
+                background:#5a5658;
+            }
+            /* FEATURES */
+            .features
+            {
+                padding:55px 30px;
+                text-align:center;
+            }
+            .features h2
+            {
+                color:#080808;
+                font-size:32px;
+                margin-bottom:35px;
+            }
+            .cards
+            {
+                display:flex;
+                justify-content:center;
+                gap:25px;
+                flex-wrap:wrap;
+            }
+            .card
+            {
+                width:280px;
+                min-height:190px;
+                background:white;
+                padding:25px;
+                border-radius:15px;
+                box-shadow:0 4px 15px rgba(0,0,0,0.12);
+                transition:0.3s;
+            }
+            .card:hover
+            {
+                transform:translateY(-7px);
+            }
+            .icon
+            {
+                font-size:40px;
+                margin-bottom:15px;
+            }
+            .card h3
+            {
+                color:#141414;
+                margin-bottom:12px;
+            }
+            .card p
+            {
+                color:#666;
+                line-height:1.5;
+            }
+            /* ABOUT */
+            #about
+            {
+                background:#fff0f5;
+                padding:50px 30px;
+                text-align:center;
+            }
+            #about h2
+            {
+                color:#0c0c0c;
+                margin-bottom:15px;
+            }
+            #about p
+            {
+                max-width:800px;
+                margin:auto;
+                line-height:1.7;
+                color:#555;
+            }
+            /* FOOTER */
+            footer
+            {
+                background:#1a1919;
+                color:white;
+                text-align:center;
+                padding:18px;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- HEADER -->
+        <header>
+            <h2>🤰 Pregnancy Tracker</h2>
+            <nav>
+                <a href="{% url 'Guest:HomePage' %}">
+                    Home
+                </a>
+                <a href="#about">
+                    About
+                </a>
+            </nav>
+        </header>
+        <!-- HERO -->
+        <section class="hero">
+            <div class="hero-content">
+                <h1>
+                    Healthy Pregnancy💕
+                </h1>
+                <p>
+                    Your complete companion for pregnancy care.
+                    Track pregnancy milestones,get nutrition guidance and
+                    stay connected with your doctor.
+                </p>
+                <a href="{% url 'Guest:UserRegistration' %}" class="btn">
+                    UserRegistration
+                </a>
+                <a href="{% url 'Guest:Login' %}" class="btn">
+                    Login
+                </a>
+                <a href="{% url 'Guest:DoctorLogin' %}" class="btn">
+                    Doctor Login
+                </a>
+                <a href="{% url 'Guest:AdminLogin' %}" class="btn">
+                    Admin Login
+                </a>
+            </div>
+        </section>
+        <!-- FEATURES -->
+        <section class="features">
+            <h2>
+                Our Features
+            </h2>
+            <div class="cards">
+                <div class="card">
+                    <div class="icon">
+                        🤰
+                    </div>
+                    <h3>
+                        Pregnancy Tracking
+                    </h3>
+                    <p>
+                        Track pregnancy weeks, milestones,
+                        health information and appointments.
+                    </p>
+                </div>
+                <div class="card">
+                    <div class="icon">
+                        👶
+                    </div>
+                    <h3>
+                        Baby Growth
+                    </h3>
+                    <p>
+                        Track your baby's development week by week throughout your pregnancy.
+                    </p>
+                </div>
+                <div class="card">
+                    <div class="icon">
+                        🥗
+                    </div>
+                   <h3>
+                        Nutrition
+                    </h3>
+                    <p>
+                        Get healthy food and nutrition
+                        recommendations during pregnancy.
+                    </p>
+                </div>
+                <div class="card">
+                    <div class="icon">
+                        👨‍⚕️
+                    </div>
+                    <h3>
+                        Doctor Support
+                    </h3>
+                    <p>
+                        Manage appointments and communicate
+                        with your doctor.
+                    </p>
+                </div>
+                <div class="card">
+                    <div class="icon">
+                        🤖
+                    </div>
+                    <h3>
+                        AI & ML Support
+                    </h3>
+                    <p>
+                        Get intelligent health and nutrition
+                        recommendations using machine learning.
+                    </p>
+                </div>
+            </div>
+        </section>
+        <!-- ABOUT -->
+        <section id="about">
+            <h2>
+                About Pregnancy Tracker
+            </h2>
+            <p>
+                Pregnancy and Baby Tracker is a web-based application
+                designed to help mothers manage pregnancy and baby
+                healthcare activities in one platform. It provides
+                pregnancy tracking, nutrition guidance, doctor support and
+                AI-based recommendations.
+            </p>
+        </section>
+        <!-- FOOTER -->
+        <footer>
+            © 2026 Pregnancy Tracker | All Rights Reserved
+        </footer>
+    </body>
+</html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport"
+            content="width=device-width, initial-scale=1.0">
+        <title>Login | Pregnancy & Baby Tracker</title>
+        <style>
+            *{
+                margin:0;
+                padding:0;
+                box-sizing:border-box;
+                font-family:Arial, sans-serif;
+            }
+            /* BODY */
+            body
+            {
+                min-height:100vh;
+                display:flex;
+                justify-content:center;
+                align-items:center;
+            background:#f5faff;
+            }
+            /* LOGIN CONTAINER */
+            .login-container
+            {
+                width:400px;
+                background:white;
+                padding:40px;
+                border-radius:18px;
+                border:2px solid #f3a6c2;
+                box-shadow: 0 5px 20px rgba(0,0,0,0.10);
+                text-align:center;
+            }
+            /* LOGO */
+            .logo
+            {
+                font-size:50px;
+                margin-bottom:10px;
+            }
+            /* MAIN HEADING */
+            h1
+            {
+                color:#f3a6c2;
+                margin-bottom:8px;
+                font-size:30px;
+            }
+            /* SUBTITLE */
+            .subtitle
+            {
+                color:#555;
+                margin-bottom:30px;
+                font-size:14px;
+            }
+            /* FORM */
+            .form-group
+            {
+                text-align:left;
+                margin-bottom:20px;
+            }
+            .form-group label
+            {
+                display:block;
+                margin-bottom:7px;
+                color:#000;
+                font-weight:bold;
+            }
+            /* INPUT */
+            .form-group input
+            {
+                width:100%;
+                padding:12px;
+                border:1px solid #9ddcf5;
+                border-radius:7px;
+                outline:none;
+                font-size:15px;
+                background:#ffffff;
+            }
+            /* INPUT FOCUS */
+            .form-group input:focus{
+                border-color:#9ddcf5;
+                box-shadow:
+                    0 0 5px rgba(157,220,245,0.5);
+            }
+            /* LOGIN BUTTON */
+            .login-btn
+            {
+                width:100%;
+                padding:12px;
+                border:1px solid #9ddcf5;
+                border-radius:7px;
+                background:#9ddcf5;
+                color:#000;
+                font-size:17px;
+                font-weight:bold;
+                cursor:pointer;
+                transition:0.3s;
+            }
+            /* BLACK HOVER */
+            .login-btn:hover
+            {
+                background:#000;
+                color:white;
+                border-color:#000;
+            }
+            /* REGISTER */
+            .register
+            {
+                margin-top:22px;
+                color:#555;
+                font-size:14px;
+            }
+            .register a
+            {
+                color:#000;
+                background:#dff5fc;
+                border:1px solid #9ddcf5;
+                padding:5px 10px;
+                border-radius:5px;
+                text-decoration:none;
+                font-weight:bold;
+                margin-left:5px;
+                transition:0.3s;
+            }
+            .register a:hover
+            {
+                background:#000;
+                color:white;
+                border-color:#000;
+            }
+            /* BACK TO HOME */
+            .back
+            {
+                margin-top:18px;
+            }
+            .back a
+            {
+                color:#000;
+                background:#dff5fc;
+                border:1px solid #9ddcf5;
+                padding:7px 14px;
+                border-radius:6px;
+                text-decoration:none;
+                font-size:14px;
+                transition:0.3s;
+            }
+            .back a:hover
+            {
+                background:#000;
+                color:white;
+                border-color:#000;
+            }
+            /* RESPONSIVE */
+            @media(max-width:500px)
+            {
+                .login-container
+                {
+                    width:90%;
+
+                    padding:30px 25px;
+                }
+            }
+        </style>
+    </head>
+    <body>
+    <div class="login-container">
+        <!-- LOGO -->
+        <div class="logo">
+            🤰
+        </div>
+        <!-- HEADING -->
+        <h1>
+            Welcome Back
+        </h1>
+        <p class="subtitle">
+            Login to your Pregnancy & Baby Tracker
+        </p>
+        <!-- LOGIN FORM -->
+        <form method="post">
+            {% csrf_token %}
+            <!-- EMAIL -->
+            <div class="form-group">
+                <label>
+                    Email
+                </label>
+                <input
+                    type="email"
+                    name="txt_email"
+                    placeholder="Enter your email"
+                    required>
+            </div>
+            <!-- PASSWORD -->
+            <div class="form-group">
+                <label>
+                    Password
+                </label>
+                <input
+                    type="password"
+                    name="txt_password"
+                    placeholder="Enter your password"
+                    required>
+            </div>
+            <!-- LOGIN BUTTON -->
+            <button
+                type="submit"
+                name="btn_login"
+                class="login-btn">
+                Login
+            </button>
+        </form>
+        <!-- REGISTER -->
+        <div class="register">
+            Don't have an account?
+            <a href="{% url 'Guest:UserRegistration' %}">
+                Register
+            </a>
+        </div>
+        <!-- HOME -->
+        <div class="back">
+            <a href="{% url 'Guest:HomePage' %}">
+                ← Back to Home
+            </a>
+        </div>
+    </div>
+    </body>
+</html>

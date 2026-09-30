@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Nutrition & Healthy Foods</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet">
+
+    <style>
+
+        body {
+            background: #f4f8fb;
+            font-family: Arial, sans-serif;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .page-title {
+            font-weight: bold;
+            color: #173b57;
+        }
+
+        .week-box {
+            background: #e8f4ff;
+            border: 1px solid #000;
+            border-radius: 10px;
+            padding: 18px;
+            margin-bottom: 25px;
+        }
+
+        .week-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2c6e9e;
+        }
+
+        .search-box {
+            background: white;
+            border: 1px solid #000;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .food-card {
+            border: 1px solid #000;
+            border-radius: 10px;
+            padding: 20px;
+            background: white;
+            height: 100%;
+            transition: 0.2s;
+        }
+
+        .food-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        .food-name {
+            color: #173b57;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .category-badge {
+            background: #d9efff;
+            color: #173b57;
+            border: 1px solid #2c6e9e;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+
+        .nutrient-box {
+            background: #f8fbfd;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            margin-top: 12px;
+        }
+
+        .nutrient-item {
+            margin-bottom: 7px;
+        }
+
+        .recommendation {
+            background: #eef8f0;
+            border-left: 4px solid #198754;
+            padding: 12px;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+
+        .no-data {
+            border: 1px solid #000;
+            border-radius: 10px;
+            padding: 25px;
+            background: white;
+        }
+
+        .btn-search {
+            background: #2c6e9e;
+            border: 1px solid #000;
+            color: white;
+        }
+
+        .btn-search:hover {
+            background: #173b57;
+            color: white;
+        }
+
+        .btn-reset {
+            border: 1px solid #000;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container main-container mt-4 mb-5">
+
+
+    <!-- PAGE TITLE -->
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <div>
+
+            <h2 class="page-title">
+                Nutrition & Healthy Foods
+            </h2>
+
+            <p class="text-muted mb-0">
+                Pregnancy week-based nutrition recommendations
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <hr>
+
+
+    <!-- CURRENT WEEK -->
+
+    {% if current_week %}
+
+    <div class="week-box">
+
+        <div class="row align-items-center">
+
+            <div class="col-md-8">
+
+                <h5 class="mb-1">
+                    Current Pregnancy Week
+                </h5>
+
+                <p class="mb-0 text-muted">
+                    Nutrition recommendations are automatically
+                    selected according to your current pregnancy week.
+                </p>
+
+            </div>
+
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+
+                <span class="week-number">
+                    Week {{ current_week }}
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    {% else %}
+
+    {% endif %}
+
+
+    <!-- SEARCH -->
+
+    <div class="search-box">
+
+        <form method="GET">
+
+            <div class="row g-3 align-items-end">
+
+
+                <!-- FOOD SEARCH -->
+
+                <div class="col-md-5">
+
+                    <label class="form-label">
+                        Search Food
+                    </label>
+
+                    <input
+                        type="text"
+                        name="search"
+                        class="form-control"
+                        placeholder="Search food..."
+                        value="{{ search }}">
+
+                </div>
+
+
+                <!-- CATEGORY -->
+
+                <div class="col-md-4">
+
+                    <label class="form-label">
+                        Category
+                    </label>
+
+                    <input
+                        type="text"
+                        name="category"
+                        class="form-control"
+                        placeholder="Example: Fruits, Vegetables"
+                        value="{{ category }}">
+
+                </div>
+
+
+                <!-- SEARCH BUTTON -->
+
+                <div class="col-md-2">
+
+                    <button
+                        type="submit"
+                        class="btn btn-search w-100">
+
+                        Search
+
+                    </button>
+
+                </div>
+
+
+                <!-- RESET -->
+
+                <div class="col-md-1">
+
+                    <a
+                        href="{% url 'User:Nutrition' %}"
+                        class="btn btn-light btn-reset w-100">
+
+                        ↻
+
+                    </a>
+
+                </div>
+
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- NUTRITION DATA -->
+
+    <div class="row">
+
+
+        {% for food in nutrition %}
+
+
+        <div class="col-md-4 mb-4">
+
+
+            <div class="food-card">
+
+
+                <!-- FOOD NAME -->
+
+                <h4 class="food-name">
+
+                    {{ food.name }}
+
+                </h4>
+
+
+                <!-- CATEGORY -->
+
+                <p>
+
+                    <strong>Category:</strong>
+
+                    <span class="category-badge">
+
+                        {{ food.category }}
+
+                    </span>
+
+                </p>
+
+
+                <hr>
+
+
+                <!-- WEEK -->
+
+                <p>
+
+                    <strong>Recommended Week:</strong>
+
+                    Week {{ food.week_start }} -
+                    Week {{ food.week_end }}
+
+                </p>
+
+
+                <!-- NUTRIENTS -->
+
+                <div class="nutrient-box">
+
+
+                    <div class="nutrient-item">
+
+                        <strong>Calories:</strong>
+
+                        {{ food.calories }}
+
+                    </div>
+
+
+                    <div class="nutrient-item">
+
+                        <strong>Protein:</strong>
+
+                        {{ food.protein }}
+
+                    </div>
+
+
+                    <div class="nutrient-item">
+
+                        <strong>Iron:</strong>
+
+                        {{ food.iron }}
+
+                    </div>
+
+
+                    <div class="nutrient-item">
+
+                        <strong>Calcium:</strong>
+
+                        {{ food.calcium }}
+
+                    </div>
+
+
+                    <div class="nutrient-item">
+
+                        <strong>Fiber:</strong>
+
+                        {{ food.fiber }}
+
+                    </div>
+
+
+                </div>
+
+
+                <!-- RECOMMENDATION -->
+
+                <div class="recommendation">
+
+                    <strong>
+                        Recommendation
+                    </strong>
+
+                    <br>
+
+                    {{ food.recommendation }}
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+        {% empty %}
+
+
+        <!-- NO DATA -->
+
+        <div class="col-12">
+
+            <div class="no-data text-center">
+
+                {% if current_week %}
+
+                    <h5>
+                        No nutrition data available
+                    </h5>
+
+                    <p class="text-muted mb-0">
+
+                        No nutrition records were found for
+                        pregnancy Week {{ current_week }}.
+
+                    </p>
+
+                {% else %}
+
+                    <h5>
+                        No nutrition data available
+                    </h5>
+
+                    <p class="text-muted mb-0">
+
+                        Complete your pregnancy profile first.
+
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+
+        {% endfor %}
+
+
+    </div>
+
+
+</div>
+
+
+<script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+</script>
+
+
+</body>
+
+</html>

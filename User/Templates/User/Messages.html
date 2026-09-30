@@ -1,0 +1,519 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Message Doctor | Pregnancy & Baby Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4A90E2;
+            --primary-hover: #357ABD;
+            --bg-page: #F4F7FC;
+            --card-bg: #FFFFFF;
+            --text-main: #2D3748;
+            --text-muted: #718096;
+            --border-color: #E2E8F0;
+            --sent-bubble: #EBF5FF;
+            --sent-border: #BFDBFE;
+            --received-bubble: #F1F5F9;
+            --received-border: #E2E8F0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 22px;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .top-bar h1 {
+            font-size: 24px;
+            font-weight: 800;
+            color: #1E293B;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-nav {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: #FFFFFF;
+            color: #475569;
+            border: 1.5px solid var(--border-color);
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+            transition: all 0.2s ease;
+        }
+
+        .btn-nav:hover {
+            background: #E2E8F0;
+            color: #0F172A;
+        }
+
+        /* Alert Messages */
+        .alert {
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .alert-success {
+            background: #ECFDF5;
+            color: #065F46;
+            border: 1px solid #A7F3D0;
+        }
+
+        .alert-error {
+            background: #FEF2F2;
+            color: #991B1B;
+            border: 1px solid #FECACA;
+        }
+
+        /* Locked State Card */
+        .locked-card {
+            background: #FFFFFF;
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border-color);
+            max-width: 650px;
+            margin: 30px auto;
+        }
+
+        .locked-icon {
+            width: 72px;
+            height: 72px;
+            background: #EFF6FF;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            margin: 0 auto 20px;
+            border: 1px solid #BFDBFE;
+        }
+
+        .locked-card h2 {
+            font-size: 22px;
+            font-weight: 800;
+            color: #1E293B;
+            margin-bottom: 10px;
+        }
+
+        .locked-card p {
+            font-size: 14.5px;
+            color: #64748B;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .pending-box {
+            background: #FFFBEB;
+            border: 1px solid #FDE68A;
+            border-radius: 14px;
+            padding: 16px 20px;
+            text-align: left;
+            margin-bottom: 25px;
+        }
+
+        .pending-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #92400E;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .pending-item {
+            font-size: 13.5px;
+            color: #78350F;
+            padding: 4px 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-primary-action {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 26px;
+            background: var(--primary);
+            color: #ffffff;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 700;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 14px rgba(74, 144, 226, 0.35);
+        }
+
+        .btn-primary-action:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+        }
+
+        /* Active Chat Card */
+        .chat-container {
+            background: #FFFFFF;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 150px);
+            min-height: 520px;
+        }
+
+        /* Chat Header */
+        .chat-header {
+            padding: 18px 24px;
+            background: #FFFFFF;
+            border-bottom: 1px solid #F1F5F9;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .doctor-selector-form {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .doctor-selector-form label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #64748B;
+            text-transform: uppercase;
+        }
+
+        .select-doctor {
+            padding: 8px 14px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #1E293B;
+            background: #F8FAFC;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .select-doctor:focus {
+            border-color: var(--primary);
+        }
+
+        .confirmed-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: #ECFDF5;
+            color: #065F46;
+            border: 1px solid #A7F3D0;
+            font-size: 11.5px;
+            font-weight: 700;
+            padding: 4px 10px;
+            border-radius: 20px;
+        }
+
+        /* Messages Body */
+        .chat-body {
+            flex: 1;
+            padding: 24px;
+            overflow-y: auto;
+            background: #FAFBFD;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .message-bubble {
+            max-width: 70%;
+            padding: 14px 18px;
+            border-radius: 16px;
+            font-size: 14px;
+            line-height: 1.5;
+            word-break: break-word;
+            position: relative;
+        }
+
+        .message-sent {
+            align-self: flex-end;
+            background: var(--sent-bubble);
+            border: 1px solid var(--sent-border);
+            color: #1E3A8A;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message-received {
+            align-self: flex-start;
+            background: #FFFFFF;
+            border: 1px solid var(--border-color);
+            color: #1E293B;
+            border-bottom-left-radius: 4px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
+        }
+
+        .msg-sender {
+            font-size: 11px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .message-sent .msg-sender {
+            color: var(--primary);
+        }
+
+        .message-received .msg-sender {
+            color: #059669;
+        }
+
+        .msg-time {
+            font-size: 10.5px;
+            color: #94A3B8;
+            margin-top: 6px;
+            text-align: right;
+        }
+
+        .chat-empty {
+            text-align: center;
+            margin: auto;
+            color: var(--text-muted);
+            padding: 40px 20px;
+        }
+
+        .chat-empty-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        /* Chat Input Footer */
+        .chat-footer {
+            padding: 16px 20px;
+            background: #FFFFFF;
+            border-top: 1px solid #F1F5F9;
+        }
+
+        .chat-input-form {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 14px;
+            font-size: 14px;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .chat-input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.15);
+        }
+
+        .btn-send {
+            padding: 12px 22px;
+            background: var(--primary);
+            color: #ffffff;
+            border: none;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .btn-send:hover {
+            background: var(--primary-hover);
+            transform: translateY(-1px);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <h1>💬 Message Doctor</h1>
+        <div class="nav-actions">
+            <a href="{% url 'User:Appointments' %}" class="btn-nav">
+                📅 Appointments
+            </a>
+            <a href="{% url 'User:UserDashboard' %}" class="btn-nav">
+                🏠 Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Django Messages -->
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert {% if message.tags == 'error' %}alert-error{% else %}alert-success{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    {% if has_confirmed_doctor %}
+        <!-- Active Chat Interface -->
+        <div class="chat-container">
+            <!-- Header with Doctor Selector -->
+            <div class="chat-header">
+                <form method="GET" class="doctor-selector-form">
+                    <label for="doctor">Chatting With:</label>
+                    <select name="doctor" id="doctor" class="select-doctor" onchange="this.form.submit()">
+                        {% for doc in confirmed_doctors %}
+                            <option value="{{ doc.id }}" {% if doc.id == selected_doctor_id %}selected{% endif %}>
+                                Dr. {{ doc.name }} ({{ doc.specialization }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                </form>
+
+                <div class="confirmed-badge">
+                    ✅ Confirmed Appointment
+                </div>
+            </div>
+
+            <!-- Messages Body -->
+            <div class="chat-body" id="chatBody">
+                {% for msg in conversation %}
+                    {% if msg.sender == user %}
+                        <!-- Sent Message -->
+                        <div class="message-bubble message-sent">
+                            <div class="msg-sender">You</div>
+                            <div>{{ msg.message }}</div>
+                            <div class="msg-time">{{ msg.sent_at|date:"d M, h:i A" }}</div>
+                        </div>
+                    {% else %}
+                        <!-- Received Message from Doctor -->
+                        <div class="message-bubble message-received">
+                            <div class="msg-sender">Dr. {{ active_doctor.name|default:msg.sender.user_name }}</div>
+                            <div>{{ msg.message }}</div>
+                            <div class="msg-time">{{ msg.sent_at|date:"d M, h:i A" }}</div>
+                        </div>
+                    {% endif %}
+                {% empty %}
+                    <div class="chat-empty">
+                        <div class="chat-empty-icon">👋</div>
+                        <p>No messages yet with Dr. {{ active_doctor.name }}.</p>
+                        <p class="small text-muted">Type a question below to start your consultation.</p>
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Send Input Footer -->
+            <div class="chat-footer">
+                <form method="POST" class="chat-input-form">
+                    {% csrf_token %}
+                    <input type="hidden" name="doctor_id" value="{{ selected_doctor_id }}">
+                    <input 
+                        type="text" 
+                        name="message" 
+                        class="chat-input" 
+                        placeholder="Type your message to Dr. {{ active_doctor.name }}..." 
+                        autocomplete="off" 
+                        required
+                    >
+                    <button type="submit" class="btn-send">
+                        Send ✉️
+                    </button>
+                </form>
+            </div>
+        </div>
+
+    {% else %}
+        <!-- Locked State Card -->
+        <div class="locked-card">
+            <div class="locked-icon">🔒</div>
+            <h2>Doctor Messaging Locked</h2>
+            <p>
+                To chat with a doctor, you must have an appointment that has been <strong>booked and confirmed (accepted)</strong> by the doctor.
+            </p>
+
+            {% if pending_appointments %}
+                <div class="pending-box">
+                    <div class="pending-title">⏳ Appointments Awaiting Confirmation:</div>
+                    {% for appt in pending_appointments %}
+                        <div class="pending-item">
+                            <span>Dr. {{ appt.doctor.name }} ({{ appt.appointment_date|date:"d M Y" }})</span>
+                            <strong>Pending</strong>
+                        </div>
+                    {% endfor %}
+                    <div style="font-size: 12px; color: #92400E; margin-top: 8px;">
+                        Once the doctor accepts your appointment, the chat will unlock automatically!
+                    </div>
+                </div>
+            {% endif %}
+
+            <a href="{% url 'User:Appointments' %}" class="btn-primary-action">
+                📅 Book an Appointment Now
+            </a>
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    // Auto-scroll chat to bottom
+    const chatBody = document.getElementById('chatBody');
+    if (chatBody) {
+        chatBody.scrollTop = chatBody.scrollHeight;
+    }
+</script>
+
+</body>
+</html>

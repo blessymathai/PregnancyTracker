@@ -1,0 +1,371 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Pregnancy Tracker</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 30px;
+            background: #f4f8fb;
+            font-family: Arial, sans-serif;
+            color: #000;
+        }
+
+        .tracker-card {
+            max-width: 850px;
+            margin: 20px auto;
+            background: white;
+            padding: 30px;
+            border: 2px solid #000;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: bold;
+        }
+
+        h4 {
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        .form-control,
+        .form-select {
+            border: 1px solid #000;
+            border-radius: 6px;
+            padding: 11px;
+        }
+
+        .form-control:focus,
+        .form-select:focus {
+            border-color: #000;
+            box-shadow: none;
+        }
+
+        /* Progress */
+        .progress-container {
+            margin: 25px 0;
+        }
+
+        .progress {
+            height: 30px;
+            border: 1px solid #000;
+            border-radius: 15px;
+            background: #e8e8e8;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            background: #9ddcf5;
+            color: #000;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: width 0.3s ease;
+        }
+
+        /* Milestone */
+        .milestone-box {
+            background: #dff5fc;
+            border: 1px solid #000;
+            border-radius: 8px;
+            padding: 18px;
+            margin: 20px 0;
+        }
+
+        .milestone-box strong {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        /* Buttons */
+        .btn-save {
+            background: #9ddcf5;
+            color: #000;
+            border: 1px solid #000;
+            font-weight: bold;
+            padding: 11px 20px;
+            border-radius: 6px;
+        }
+
+        .btn-save:hover {
+            background: #78c9e9;
+            color: #000;
+        }
+
+        .btn-back {
+            background: white;
+            color: #000;
+            border: 1px solid #000;
+            font-weight: bold;
+            padding: 11px 20px;
+            border-radius: 6px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-back:hover {
+            background: #eee;
+            color: #000;
+        }
+
+        /* Weekly Records */
+        .weekly-record {
+            border: 1px solid #000;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
+            background: #fafafa;
+        }
+
+        .weekly-record strong {
+            font-size: 17px;
+        }
+
+        .empty-record {
+            padding: 15px;
+            border: 1px solid #000;
+            border-radius: 8px;
+            background: #f8f8f8;
+        }
+
+        .alert {
+            border: 1px solid #000;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 15px;
+            }
+
+            .tracker-card {
+                padding: 20px;
+                margin: 10px auto;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="tracker-card">
+
+        <h2>🤰 Pregnancy Tracker</h2>
+
+        <hr>
+
+        <!-- ================= DJANGO MESSAGES ================= -->
+        {% if messages %}
+        <div class="mb-3">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags|default:'info' }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% if has_pregnancy %}
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+            <div>
+                <strong>Last Period:</strong> {{ pregnancy.last_period_date|date:'M d, Y' }}
+            </div>
+        </div>
+
+        <!-- ================= CALCULATED STATS ================= -->
+        <div class="row g-3 my-2" id="statsRow">
+                <div class="col-md-6">
+                    <div class="p-3 border rounded text-center"
+                        style="background: #e8f4ff; border: 1px solid #2c6e9e !important;">
+                        <div class="text-muted small fw-bold text-uppercase">Current Pregnancy Week</div>
+                        <div class="fs-3 fw-bold" style="color: #2c6e9e;" id="displayWeek">{% if current_week %}Week
+                            
+                            
+                            {{ current_week }}{% else %}--{% endif %}</div>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="p-3 border rounded text-center"
+                        style="background: #e8f4ff; border: 1px solid #2c6e9e !important;">
+                        <div class="text-muted small fw-bold text-uppercase">Current Month</div>
+                        <div class="fs-3 fw-bold" style="color: #2c6e9e;" id="displayMonth">{% if current_month %}Month
+                            {{ current_month }}{% else %}--{% endif %}</div>
+                    </div>
+                </div>
+
+        </div>
+
+            <!-- ================= PROGRESS BAR ================= -->
+            <div class="progress-container my-3" id="progressContainer">
+                <label class="fw-bold">Pregnancy Progress</label>
+                <div class="progress" style="height: 28px; border: 1px solid #000; border-radius: 14px;">
+                    <div class="progress-bar" id="progressBar" role="progressbar" aria-valuemin="0"
+                        aria-valuemax="41" aria-valuenow="{{ current_week|default:0 }}"
+                        style="background: #9ddcf5; color: #000; font-weight: bold; width: {% if current_week %}{% widthratio current_week 41 100 %}%{% else %}0%{% endif %};">
+                        {% if current_week %}{{ current_week }}/41 weeks{% endif %}
+                    </div>
+                </div>
+            </div>
+
+            {% if pregnancy_complete %}
+            <div class="alert alert-success">
+                Week 41 is complete. <a href="{% url 'User:PregnancyProfile' %}">Start a new pregnancy</a> when ready.
+            </div>
+            {% elif current_week == 41 %}
+            <div class="alert alert-info">Week 41 is in progress. You can start a new pregnancy after it is complete.</div>
+            {% endif %}
+
+            <form method="get" action="{% url 'User:WeeklyRecordHistory' %}"
+                class="d-flex flex-wrap align-items-end gap-2 my-3">
+                <div>
+                    <label for="previewWeek" class="form-label fw-bold mb-1">Preview Week</label>
+                    <select name="week" id="previewWeek" class="form-select">
+                        {% for week in available_weeks %}
+                        <option value="{{ week }}" {% if week == selected_week %}selected{% endif %}>
+                            Week {{ week }}{% if week == current_week %} (Current){% endif %}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-primary">View Week</button>
+            </form>
+
+        {% else %}
+        <div class="alert alert-info">
+            Pregnancy profile has not been created yet. Add your Last Period Date in your profile to get started.
+        </div>
+        <a href="{% url 'User:PregnancyProfile' %}" class="btn btn-primary">Enter Last Period Date</a>
+        {% endif %}
+
+        {% if has_pregnancy %}
+        <hr class="my-4">
+
+        <!-- ================= MILESTONE ================= -->
+        <div class="milestone-box" id="milestoneBox">
+            <strong>
+                📌 Weekly Milestone (Week {{ selected_week }})
+            </strong>
+            {% if milestone %}
+            <div class="mt-2">
+                <h5 class="mb-1" style="color: #173b57;">
+                    <strong>{{ milestone.title }}</strong>
+                </h5>
+                <p class="mb-1">
+                    {{ milestone.description }}
+                </p>
+                {% if milestone.tips %}
+                <small>
+                    <b>Tips:</b> {{ milestone.tips }}
+                </small>
+                {% endif %}
+            </div>
+            {% elif milestones %}
+            {% for m in milestones %}
+            <div class="mt-2">
+                <h5 class="mb-1" style="color: #173b57;">
+                    <strong>{{ m.title }}</strong>
+                </h5>
+                <p class="mb-1">
+                    {{ m.description }}
+                </p>
+                {% if m.tips %}
+                <small>
+                    <b>Tips:</b> {{ m.tips }}
+                </small>
+                {% endif %}
+            </div>
+            {% endfor %}
+            {% else %}
+            <p class="mb-0 text-muted mt-2">
+                No milestone recorded for Week {{ selected_week }}.
+            </p>
+            {% endif %}
+        </div>
+
+        {% if current_week <= 40 %}
+        <section class="mb-4 p-3 border rounded bg-white" id="nutritionBox">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+                <div>
+                    <h4 class="mb-0 fw-bold" style="color: #173b57;">
+                        Week {{ current_week }} Nutrition Recommendations
+                    </h4>
+                    {% if nutrition_focus %}
+                    <div class="text-primary small fw-bold mt-1">Focus: {{ nutrition_focus }}</div>
+                    {% endif %}
+                </div>
+                <span class="badge" style="background: #2c6e9e; color: white; padding: 6px 12px;">
+                    {% if current_week <= 12 %}First Trimester (Weeks 1-12){% elif current_week <= 27 %}Second Trimester (Weeks 13-27){% else %}Third Trimester (Weeks 28-40){% endif %}
+                </span>
+            </div>
+
+            {% if weekly_nutrition %}
+            <div class="row g-3">
+                {% for food in weekly_nutrition %}
+                <div class="col-md-6 col-lg-4">
+                    <article class="border rounded p-3 h-100">
+                        <span class="badge text-bg-info mb-2">{{ food.category }}</span>
+                        <h5 class="h6 fw-bold">{{ food.name|default:food.food }}</h5>
+                        <ul class="list-unstyled small mb-2">
+                            <li><strong>Calories:</strong> {{ food.calories }} kcal</li>
+                            <li><strong>Protein:</strong> {{ food.protein }}g</li>
+                            <li><strong>Fiber:</strong> {{ food.fiber }}g</li>
+                            <li><strong>Carbs:</strong> {{ food.carbs }}g</li>
+                            {% if food.fat %}<li><strong>Healthy Fat:</strong> {{ food.fat }}g</li>{% endif %}
+                        </ul>
+                        {% if food.recommendation %}
+                        <p class="small mb-0">{{ food.recommendation }}</p>
+                        {% endif %}
+                    </article>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="mb-0">No specific nutrition recommendations are available for this week.</p>
+            {% endif %}
+        </section>
+        {% else %}
+        <div class="alert alert-info">Week-specific nutrition recommendations are available through Week 40.</div>
+        {% endif %}
+
+        <hr class="my-4">
+
+        {% endif %}
+
+        {% if has_pregnancy %}
+        <a href="{% url 'User:WeeklyRecordHistory' %}" class="btn btn-outline-primary mb-3">
+            View Weekly Record History
+        </a>
+        {% endif %}
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>

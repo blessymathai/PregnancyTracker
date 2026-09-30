@@ -1,0 +1,94 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="container py-4">
+
+    <h2>Medical Reports</h2>
+
+    <div class="card shadow-sm mt-4">
+
+        <div class="table-responsive">
+
+            <table class="table table-bordered">
+
+                <thead>
+
+                    <tr>
+                        <th>Patient</th>
+                        <th>Report</th>
+                        <th>Doctor</th>
+                        <th>Uploaded</th>
+                        <th>View</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                    {% for report in reports %}
+
+                    <tr>
+
+                        <td>
+                            {{ report.user.name }}
+                        </td>
+
+                        <td>
+                            {{ report.title }}
+                        </td>
+
+                        <td>
+
+                            {% if report.doctor %}
+                                Dr. {{ report.doctor.doctor_name }}
+                            {% else %}
+                                Not Assigned
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            {{ report.uploaded_at }}
+                        </td>
+
+                        <td>
+
+                            <a
+                                href="{{ report.report_file.url }}"
+                                target="_blank"
+                                class="btn btn-primary btn-sm"
+                            >
+                                View Report
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+
+                    <tr>
+
+                        <td
+                            colspan="5"
+                            class="text-center"
+                        >
+                            No reports found.
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

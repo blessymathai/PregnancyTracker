@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Baby Records</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <style>
+
+        body {
+            background: #f5f7fb;
+            font-family: Arial, sans-serif;
+        }
+
+        .sidebar {
+            min-height: 100vh;
+            background: #173b57;
+            padding: 25px 15px;
+        }
+
+        .sidebar h3 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+        }
+
+        .sidebar a:hover,
+        .sidebar .active {
+            background: #2c6e9e;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,.07);
+        }
+
+        .page-title {
+            color: #173b57;
+            font-weight: 600;
+        }
+
+        .count-box {
+            background: #eaf4fb;
+            border-radius: 10px;
+            padding: 15px 20px;
+            margin-top: 20px;
+        }
+
+        .table th {
+            background: #173b57;
+            color: white;
+            text-align: center;
+        }
+
+        .table td {
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        label {
+            font-weight: 600;
+            margin-bottom: 7px;
+        }
+
+        .form-control,
+        .form-select {
+            border: 1px solid #b8c2cc;
+            border-radius: 8px;
+            padding: 11px;
+        }
+
+        .btn-save {
+            background: #173b57;
+            color: white;
+            border-radius: 8px;
+            padding: 11px 25px;
+            border: none;
+        }
+
+        .btn-save:hover {
+            background: #2c6e9e;
+            color: white;
+        }
+
+        .section-title {
+            color: #173b57;
+            font-weight: 600;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="container-fluid">
+
+    <div class="row">
+
+
+        <!-- ===================================== -->
+        <!-- SIDEBAR -->
+        <!-- ===================================== -->
+
+        <div class="col-md-3 col-lg-2 sidebar">
+
+            <h3>Doctor Panel</h3>
+
+
+            <a href="{% url 'Doctor:DoctorDashboard' %}">
+                Dashboard
+            </a>
+
+
+            <a href="{% url 'Doctor:Patients' %}">
+                Patients
+            </a>
+
+
+            <a href="{% url 'Doctor:Appointments' %}">
+                Appointments
+            </a>
+
+
+            <a href="{% url 'Doctor:PregnancyRecords' %}">
+                Pregnancy Records
+            </a>
+
+
+            <a href="{% url 'Doctor:BabyRecords' %}"
+               class="active">
+                Baby Records
+            </a>
+
+
+            <a href="{% url 'Doctor:Prescriptions' %}">
+                Prescriptions
+            </a>
+
+
+            <a href="{% url 'Doctor:Messages' %}">
+                Messages
+            </a>
+
+
+            <a href="{% url 'Doctor:ChatBox' %}">
+                AI Chatbox
+            </a>
+
+
+            <hr>
+
+
+            <a href="{% url 'Doctor:Logout' %}">
+                Logout
+            </a>
+
+        </div>
+
+
+
+        <!-- ===================================== -->
+        <!-- MAIN CONTENT -->
+        <!-- ===================================== -->
+
+        <div class="col-md-9 col-lg-10 content">
+
+
+            <!-- PAGE TITLE -->
+
+            <div class="mb-4">
+
+                <h2 class="page-title">
+                    Baby Records
+                </h2>
+
+                <p class="text-muted">
+                    Add and monitor baby growth and development records.
+                </p>
+
+            </div>
+
+
+
+            <!-- ===================================== -->
+            <!-- ADD BABY RECORD -->
+            <!-- ===================================== -->
+
+            <div class="card p-4">
+
+                <h4 class="section-title mb-4">
+                    Add Baby Record
+                </h4>
+
+
+                <form method="POST">
+
+                    {% csrf_token %}
+
+
+                    <!-- Mother -->
+                    <div class="mb-3">
+
+                        <label for="mother">
+                            Mother Name
+                        </label>
+
+                        <input
+                            type="text"
+                            name="mother"
+                            id="mother"
+                            class="form-control"
+                            placeholder="Enter Mother Name"
+                            required>
+
+                    </div>
+
+
+
+                    <div class="row">
+
+
+                        <!-- Date -->
+
+                        <div class="col-md-6 mb-3">
+
+                            <label for="date_of_birth">
+                                Date
+                            </label>
+
+                            <input
+                                type="date"
+                                name="date_of_birth"
+                                id="date_of_birth"
+                                class="form-control"
+                                required>
+
+                        </div>
+                        <div class="row">
+
+                    <!-- Week -->
+
+                        <div class="col-md-4 mb-3">
+
+                            <label for="week">
+                                Week
+                            </label>
+
+                            <input
+                                type="number"
+                                name="week"
+                                id="week"
+                                class="form-control"
+                                min="1"
+                                max="42"
+                                placeholder="Example: 30"
+                                required>
+
+                        </div>
+
+
+                    <!-- Time -->
+
+                    <div class="col-md-4 mb-3">
+
+                        <label for="time">
+                            Time
+                        </label>
+
+                        <input
+                            type="time"
+                            name="time"
+                            id="time"
+                            class="form-control"
+                            required>
+
+                    </div>
+
+                        <!-- Weight -->
+
+                        <div class="col-md-6 mb-3">
+
+                            <label for="weight">
+                                Weight (kg)
+                            </label>
+
+                            <input
+                                type="number"
+                                name="weight"
+                                id="weight"
+                                class="form-control"
+                                step="0.01"
+                                min="0"
+                                placeholder="Example: 3.25">
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- SAVE -->
+
+                    <button
+                        type="submit"
+                        class="btn btn-save">
+
+                        Save Baby Record
+
+                    </button>
+
+                </form>
+
+            </div>
+
+
+
+            <!-- ===================================== -->
+            <!-- TOTAL BABY RECORDS -->
+            <!-- ===================================== -->
+
+            <div class="count-box">
+
+                <strong>
+                    Total Baby Records:
+                </strong>
+
+                <span class="ms-2">
+
+                    {{ total_babies|default:"0" }}
+
+                </span>
+
+            </div>
+
+
+
+            <!-- ===================================== -->
+            <!-- DISPLAY BABY RECORDS -->
+            <!-- ===================================== -->
+
+            <div class="card p-4 mt-4">
+
+                <h4 class="section-title mb-4">
+                    Baby Records
+                </h4>
+
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>No</th>
+
+                                <th>Mothername</th>
+
+                                <th>Week</th>
+
+                                <th>Time</th>
+
+                                <th>Date</th>
+
+                                <th>Weight</th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+
+                        {% for baby in baby_records %}
+
+                            <tr>
+
+
+                                <!-- # -->
+
+                                <td>
+                                    {{ forloop.counter }}
+                                </td>
+
+
+
+                                <!-- Mother Name -->
+
+                                <td>
+
+                                    {% if baby.user %}
+
+                                        {{ baby.user.user_name }}
+
+                                    {% else %}
+
+                                        -
+
+                                    {% endif %}
+
+                                </td>
+
+
+
+                                <!-- Week -->
+
+                                <td>
+
+                                    {% if baby.week %}
+
+                                        {{ baby.week }}
+
+                                    {% else %}
+
+                                        -
+
+                                    {% endif %}
+
+                                </td>
+
+
+
+                                <!-- Time -->
+
+                                <td>
+
+                                    {% if baby.time %}
+
+                                        {{ baby.time }}
+
+                                    {% else %}
+
+                                        -
+
+                                    {% endif %}
+
+                                </td>
+
+
+
+                                <!-- Date -->
+
+                                <td>
+
+                                    {% if baby.date %}
+
+                                        {{ baby.date }}
+
+                                    {% elif baby.date_of_birth %}
+
+                                        {{ baby.date_of_birth }}
+
+                                    {% else %}
+
+                                        -
+
+                                    {% endif %}
+
+                                </td>
+
+
+
+                                <!-- Weight -->
+
+                                <td>
+
+                                    {% if baby.weight %}
+
+                                        {{ baby.weight }} kg
+
+                                    {% else %}
+
+                                        -
+
+                                    {% endif %}
+
+                                </td>
+
+
+                            </tr>
+
+
+                        {% empty %}
+
+
+                            <tr>
+
+                                <td
+                                    colspan="6"
+                                    class="text-center text-muted py-4">
+
+                                    No baby records available.
+
+                                </td>
+
+                            </tr>
+
+
+                        {% endfor %}
+
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+</body>
+
+</html>

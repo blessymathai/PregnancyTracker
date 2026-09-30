@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>AI Chatbox</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+
+    <style>
+
+        body {
+            background: #f5f7fb;
+            font-family: Arial, sans-serif;
+        }
+
+        .sidebar {
+            min-height: 100vh;
+            background: #173b57;
+            padding: 25px 15px;
+        }
+
+        .sidebar h3 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .sidebar a {
+            display: block;
+            color: white;
+            text-decoration: none;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 6px;
+        }
+
+        .sidebar a:hover,
+        .sidebar .active {
+            background: #2c6e9e;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .chat-container {
+            max-width: 850px;
+            margin: auto;
+            background: white;
+            border-radius: 18px;
+            box-shadow: 0 4px 20px rgba(0,0,0,.08);
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: #173b57;
+            color: white;
+            padding: 20px;
+        }
+
+        .chat-body {
+            height: 450px;
+            overflow-y: auto;
+            padding: 25px;
+            background: #f8f9fa;
+        }
+
+        .message {
+            padding: 12px 16px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            max-width: 75%;
+        }
+
+        .user-message {
+            background: #d9ecff;
+            margin-left: auto;
+        }
+
+        .ai-message {
+            background: #ffffff;
+            border: 1px solid #e4e4e4;
+        }
+
+        .chat-footer {
+            padding: 15px;
+            background: white;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="container-fluid">
+
+    <div class="row">
+
+        <!-- Sidebar -->
+
+        <div class="col-md-3 col-lg-2 sidebar">
+
+            <h3>Doctor Panel</h3>
+
+            <a href="{% url 'Doctor:DoctorDashboard' %}">
+                Dashboard
+            </a>
+
+            <a href="{% url 'Doctor:Patients' %}">
+                Patients
+            </a>
+
+            <a href="{% url 'Doctor:Appointments' %}">
+                Appointments
+            </a>
+
+            <a href="{% url 'Doctor:PregnancyRecords' %}">
+                Pregnancy Records
+            </a>
+
+            <a href="{% url 'Doctor:BabyRecords' %}">
+                Baby Records
+            </a>
+
+            <a href="{% url 'Doctor:Prescriptions' %}">
+                Prescriptions
+            </a>
+
+            <a href="{% url 'Doctor:Messages' %}">
+                Messages
+            </a>
+
+            <a href="{% url 'Doctor:ChatBox' %}" class="active">
+                AI Chatbox
+            </a>
+
+            <hr>
+
+            <a href="{% url 'Doctor:Logout' %}">
+                Logout
+            </a>
+
+        </div>
+
+
+        <!-- Content -->
+
+        <div class="col-md-9 col-lg-10 content">
+
+            <div class="chat-container">
+
+                <!-- Header -->
+
+                <div class="chat-header">
+
+                    <h4 class="mb-1">
+                        AI Healthcare Assistant
+                    </h4>
+
+                    <small>
+                        Pregnancy & Baby Tracker AI Assistant
+                    </small>
+
+                </div>
+
+
+                <!-- Chat Body -->
+
+                <div class="chat-body" id="chatBody">
+
+                    <div class="message ai-message">
+
+                        <strong>AI Assistant</strong>
+
+                        <p class="mb-0 mt-1">
+
+                            Hello Doctor! I am your AI healthcare
+                            assistant. How can I help you today?
+
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Footer -->
+
+                <div class="chat-footer">
+
+                    <form id="chatForm">
+
+                        {% csrf_token %}
+
+                        <div class="input-group">
+
+                            <input type="text"
+                                   id="messageInput"
+                                   class="form-control"
+                                   placeholder="Type your question..."
+                                   autocomplete="off"
+                                   required>
+
+                            <button type="submit"
+                                    class="btn btn-primary">
+
+                                Send
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+document.getElementById("chatForm").addEventListener("submit", function(event) {
+
+    event.preventDefault();
+
+    let input = document.getElementById("messageInput");
+    let message = input.value.trim();
+
+    if (message === "") {
+        return;
+    }
+
+    let chatBody = document.getElementById("chatBody");
+
+    // User message
+
+    let userMessage = document.createElement("div");
+
+    userMessage.className = "message user-message";
+
+    userMessage.innerHTML =
+        "<strong>You</strong>" +
+        "<p class='mb-0 mt-1'>" +
+        message +
+        "</p>";
+
+    chatBody.appendChild(userMessage);
+
+    input.value = "";
+
+    chatBody.scrollTop = chatBody.scrollHeight;
+
+
+    // Send request to Django
+
+    fetch("{% url 'Doctor:ChatBox' %}", {
+
+        method: "POST",
+
+        headers: {
+
+            "Content-Type": "application/x-www-form-urlencoded",
+
+            "X-CSRFToken":
+                document.querySelector(
+                    "[name=csrfmiddlewaretoken]"
+                ).value
+
+        },
+
+        body: "message=" + encodeURIComponent(message)
+
+    })
+
+    .then(response => response.json())
+
+    .then(data => {
+
+        let aiMessage = document.createElement("div");
+
+        aiMessage.className = "message ai-message";
+
+        aiMessage.innerHTML =
+            "<strong>AI Assistant</strong>" +
+            "<p class='mb-0 mt-1'>" +
+            data.response +
+            "</p>";
+
+        chatBody.appendChild(aiMessage);
+
+        chatBody.scrollTop = chatBody.scrollHeight;
+
+    })
+
+    .catch(error => {
+
+        let errorMessage = document.createElement("div");
+
+        errorMessage.className = "message ai-message";
+
+        errorMessage.innerHTML =
+            "<strong>AI Assistant</strong>" +
+            "<p class='mb-0 mt-1'>" +
+            "Sorry, unable to process your request." +
+            "</p>";
+
+        chatBody.appendChild(errorMessage);
+
+    });
+
+});
+
+</script>
+
+</body>
+</html>

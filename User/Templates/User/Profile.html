@@ -1,0 +1,518 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Profile | Pregnancy & Baby Tracker</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4A90E2;
+            --primary-hover: #357ABD;
+            --accent-pink: #FF8BA7;
+            --bg-page: #F4F7FC;
+            --card-bg: #FFFFFF;
+            --text-main: #2D3748;
+            --text-muted: #718096;
+            --border-color: #E2E8F0;
+            --shadow-subtle: 0 10px 30px rgba(74, 144, 226, 0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 40px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .edit-container {
+            width: 100%;
+            max-width: 720px;
+            background: var(--card-bg);
+            border-radius: 24px;
+            box-shadow: var(--shadow-subtle);
+            overflow: hidden;
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        /* Top Header Banner */
+        .header-banner {
+            background: linear-gradient(135deg, #4A90E2 0%, #76B4FF 50%, #FFB6C1 100%);
+            padding: 35px 30px 65px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header-banner h1 {
+            color: #ffffff;
+            font-size: 26px;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .header-banner p {
+            color: rgba(255, 255, 255, 0.92);
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Form Card Body */
+        .card-body {
+            padding: 0 35px 35px;
+            margin-top: -55px;
+            position: relative;
+        }
+
+        /* Avatar Upload Section */
+        .avatar-upload-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .avatar-preview-box {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 5px solid #ffffff;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+            background: #ffffff;
+            overflow: hidden;
+        }
+
+        .avatar-preview-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .avatar-preview-placeholder {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #EBF4FF 0%, #D6E4FF 100%);
+            color: var(--primary);
+            font-size: 44px;
+            font-weight: 800;
+        }
+
+        .file-upload-btn-label {
+            margin-top: 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 18px;
+            background: #EFF6FF;
+            color: var(--primary);
+            border: 1px solid #BFDBFE;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .file-upload-btn-label:hover {
+            background: #DBEAFE;
+            color: var(--primary-hover);
+        }
+
+        #profile_photo_input {
+            display: none;
+        }
+
+        .upload-hint {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        /* Alert Messages */
+        .alert-messages {
+            margin-bottom: 20px;
+        }
+
+        .alert {
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .alert-success {
+            background-color: #ECFDF5;
+            color: #065F46;
+            border: 1px solid #A7F3D0;
+        }
+
+        .alert-error {
+            background-color: #FEF2F2;
+            color: #991B1B;
+            border: 1px solid #FECACA;
+        }
+
+        /* Form Layout */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        input[type="date"],
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 12px;
+            font-size: 14px;
+            font-family: inherit;
+            color: var(--text-main);
+            background: #FFFFFF;
+            transition: all 0.2s ease;
+        }
+
+        input:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.15);
+        }
+
+        input.readonly-input {
+            background-color: #F8FAFC;
+            color: #64748B;
+            cursor: not-allowed;
+            border-color: #E2E8F0;
+        }
+
+        .helper-text {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 85px;
+        }
+
+        /* Action Buttons */
+        .actions-bar {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            padding-top: 15px;
+            border-top: 1px solid #F1F5F9;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px 22px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 150px;
+        }
+
+        .btn-submit {
+            background: var(--primary);
+            color: #ffffff;
+            box-shadow: 0 4px 14px rgba(74, 144, 226, 0.3);
+            border: none;
+        }
+
+        .btn-submit:hover {
+            background: var(--primary-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(74, 144, 226, 0.4);
+        }
+
+        .btn-secondary {
+            background: #F1F5F9;
+            color: #475569;
+            border: 1px solid #CBD5E1;
+        }
+
+        .btn-secondary:hover {
+            background: #E2E8F0;
+            color: #1E293B;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 640px) {
+            body {
+                padding: 15px;
+            }
+
+            .card-body {
+                padding: 0 20px 25px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+
+            .actions-bar {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="edit-container">
+    <!-- Header Banner -->
+    <div class="header-banner">
+        <h1>✏️ Edit Profile</h1>
+        <p>Update your personal information and profile picture</p>
+    </div>
+
+    <!-- Card Body -->
+    <div class="card-body">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            <!-- Photo Upload with Live Preview -->
+            <div class="avatar-upload-wrapper">
+                <div class="avatar-preview-box">
+                    {% if profile.profile_photo %}
+                        <img id="avatar_img_preview" src="{{ profile.profile_photo.url }}" class="avatar-preview-img" alt="Profile Preview">
+                    {% else %}
+                        <div id="avatar_placeholder" class="avatar-preview-placeholder">
+                            {{ registration.user_name|slice:":1"|upper|default:"U" }}
+                        </div>
+                        <img id="avatar_img_preview" src="" class="avatar-preview-img" alt="Profile Preview" style="display: none;">
+                    {% endif %}
+                </div>
+
+                <label for="profile_photo_input" class="file-upload-btn-label">
+                    📷 Change Photo
+                </label>
+                <input type="file" name="profile_photo" id="profile_photo_input" accept="image/*">
+                <span class="upload-hint">JPG, PNG or WEBP (Max 5MB)</span>
+            </div>
+
+            <!-- Messages Alert -->
+            {% if messages %}
+                <div class="alert-messages">
+                    {% for message in messages %}
+                        <div class="alert {% if message.tags == 'error' %}alert-error{% else %}alert-success{% endif %}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+
+            <!-- Form Fields Grid -->
+            <div class="form-grid">
+                <!-- Name -->
+                <div class="form-group">
+                    <label for="user_name">👤 Full Name *</label>
+                    <input 
+                        type="text" 
+                        id="user_name" 
+                        name="user_name" 
+                        value="{{ registration.user_name }}" 
+                        placeholder="Enter your name" 
+                        required
+                    >
+                </div>
+
+                <!-- Email -->
+                <div class="form-group">
+                    <label for="user_email">✉️ Email Address *</label>
+                    <input 
+                        type="email" 
+                        id="user_email" 
+                        name="user_email" 
+                        value="{{ registration.user_email }}" 
+                        placeholder="name@example.com" 
+                        required
+                    >
+                </div>
+
+                <!-- Phone -->
+                <div class="form-group">
+                    <label for="user_contact">📞 Phone Number</label>
+                    <input 
+                        type="tel" 
+                        id="user_contact" 
+                        name="user_contact" 
+                        value="{{ registration.user_contact|default:profile.contact }}" 
+                        placeholder="e.g. +91 9876543210"
+                    >
+                </div>
+
+                <!-- Date of Birth -->
+                <div class="form-group">
+                    <label for="date_of_birth">🎂 Date of Birth</label>
+                    <input 
+                        type="date" 
+                        id="date_of_birth" 
+                        name="date_of_birth" 
+                        value="{{ profile.date_of_birth|date:'Y-m-d' }}"
+                    >
+                    <span class="helper-text">Select your date of birth</span>
+                </div>
+
+                <!-- Age -->
+                <div class="form-group">
+                    <label for="age">⏳ Age (Years)</label>
+                    <input 
+                        type="number" 
+                        id="age" 
+                        name="age" 
+                        value="{{ profile.age|default:'' }}" 
+                        placeholder="Auto calculated" 
+                        readonly 
+                        class="readonly-input"
+                    >
+                    <span class="helper-text">Automatically calculated from your Date of Birth</span>
+                </div>
+
+                <!-- Address -->
+                <div class="form-group full-width">
+                    <label for="user_address">📍 Home Address</label>
+                    <textarea 
+                        id="user_address" 
+                        name="user_address" 
+                        rows="3" 
+                        placeholder="Enter your complete residential address"
+                    >{{ registration.user_address|default:profile.address }}</textarea>
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="actions-bar">
+                <button type="submit" class="btn btn-submit">
+                    💾 Save Changes
+                </button>
+                <a href="{% url 'User:MyProfile' %}" class="btn btn-secondary">
+                    Cancel & View Profile
+                </a>
+                <a href="{% url 'User:UserDashboard' %}" class="btn btn-secondary">
+                    🏠 Dashboard
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    // Live photo preview
+    const photoInput = document.getElementById('profile_photo_input');
+    const avatarImg = document.getElementById('avatar_img_preview');
+    const avatarPlaceholder = document.getElementById('avatar_placeholder');
+
+    photoInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                avatarImg.src = e.target.result;
+                avatarImg.style.display = 'block';
+                if (avatarPlaceholder) {
+                    avatarPlaceholder.style.display = 'none';
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // Date of Birth & Automatic Age Calculation
+    const dobInput = document.getElementById('date_of_birth');
+    const ageInput = document.getElementById('age');
+
+    // Restrict future dates
+    const today = new Date();
+    const yyyy = today.getFullYear();
+    const mm = String(today.getMonth() + 1).padStart(2, '0');
+    const dd = String(today.getDate()).padStart(2, '0');
+    dobInput.max = `${yyyy}-${mm}-${dd}`;
+
+    function calculateAge() {
+        if (!dobInput.value) {
+            return;
+        }
+
+        const dob = new Date(dobInput.value);
+        const now = new Date();
+
+        let age = now.getFullYear() - dob.getFullYear();
+        const monthDiff = now.getMonth() - dob.getMonth();
+
+        if (monthDiff < 0 || (monthDiff === 0 && now.getDate() < dob.getDate())) {
+            age--;
+        }
+
+        if (age >= 0) {
+            ageInput.value = age;
+        } else {
+            ageInput.value = '';
+        }
+    }
+
+    dobInput.addEventListener('change', calculateAge);
+    window.addEventListener('load', calculateAge);
+</script>
+
+</body>
+</html>
